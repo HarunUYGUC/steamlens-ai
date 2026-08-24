@@ -1,0 +1,335 @@
+/* SteamLens AI — Popup Control Panel Stylesheet */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 380px;
+  background-color: #0f1722;
+  color: #c7d5e0;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  user-select: none;
+}
+
+.popup-container {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(102, 192, 244, 0.15);
+  padding-bottom: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  font-size: 22px;
+  background: linear-gradient(135deg, #1b2838, #2a475e);
+  border: 1px solid #66c0f4;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(102, 192, 244, 0.25);
+}
+
+.brand-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: #8f98a0;
+}
+
+.version-badge {
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(102, 192, 244, 0.15);
+  border: 1px solid rgba(102, 192, 244, 0.3);
+  color: #66c0f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Mode Toggle Section */
+.mode-toggle-section {
+  background: #172433;
+  border: 1px solid rgba(102, 192, 244, 0.25);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode-toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mode-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.segmented-control {
+  display: flex;
+  background: #0d1520;
+  border: 1px solid rgba(102, 192, 244, 0.2);
+  border-radius: 6px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.segment-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #8f98a0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.segment-btn:hover {
+  color: #ffffff;
+  background: rgba(102, 192, 244, 0.08);
+}
+
+.segment-btn.active {
+  background: linear-gradient(135deg, #194668, #205c8a);
+  color: #ffffff;
+  border-color: #66c0f4;
+  box-shadow: 0 0 10px rgba(102, 192, 244, 0.35);
+}
+
+.status-pill {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+}
+
+.status-pill.ready {
+  background: rgba(164, 208, 7, 0.2);
+  border: 1px solid #a4d007;
+  color: #a4d007;
+}
+
+.status-pill.gemini {
+  background: rgba(102, 192, 244, 0.2);
+  border: 1px solid #66c0f4;
+  color: #66c0f4;
+}
+
+.status-desc {
+  font-size: 11px;
+  color: #8f98a0;
+  line-height: 1.4;
+}
+
+/* Settings Form */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label-with-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #c7d5e0;
+}
+
+.opt-badge {
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #8f98a0;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.form-select, .form-input {
+  width: 100%;
+  background: #172433;
+  border: 1px solid rgba(102, 192, 244, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #ffffff;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-select:focus, .form-input:focus {
+  border-color: #66c0f4;
+  box-shadow: 0 0 6px rgba(102, 192, 244, 0.3);
+}
+
+.input-action-row {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn, .secondary-btn {
+  background: #1e2e42;
+  border: 1px solid rgba(102, 192, 244, 0.25);
+  color: #c7d5e0;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover, .secondary-btn:hover {
+  background: #273b54;
+  color: #ffffff;
+  border-color: #66c0f4;
+}
+
+.input-hint {
+  font-size: 10px;
+  color: #8f98a0;
+  line-height: 1.3;
+}
+
+/* Button Row */
+.button-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.primary-btn {
+  flex: 1;
+  background: linear-gradient(135deg, #194668, #205c8a);
+  border: 1px solid #66c0f4;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(135deg, #205c8a, #2b7bb8);
+  box-shadow: 0 4px 12px rgba(102, 192, 244, 0.3);
+}
+
+.ghost-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #8f98a0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ghost-btn:hover {
+  background: rgba(255, 82, 82, 0.15);
+  border-color: #ff5252;
+  color: #ff5252;
+}
+
+/* Footer */
+.popup-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 10px;
+}
+
+.quick-guide {
+  font-size: 11px;
+  color: #8f98a0;
+  line-height: 1.4;
+}
+
+.quick-guide strong {
+  color: #66c0f4;
+}
+
+/* Toast */
+.popup-toast {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%) translateY(50px);
+  background: #a4d007;
+  color: #0f1722;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+}
+
+.popup-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
