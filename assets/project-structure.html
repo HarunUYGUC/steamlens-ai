@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SteamLens AI — Proje Dosya ve Modül Yapısı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #080c11;
+      color: #c7d5e0;
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .diagram-card {
+      background: linear-gradient(180deg, #101822 0%, #0d1219 100%);
+      border: 1px solid rgba(102, 192, 244, 0.25);
+      border-radius: 12px;
+      padding: 24px 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 1180px;
+    }
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .eyebrow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: #66c0f4;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+    .version-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      background: rgba(102, 192, 244, 0.12);
+      border: 1px solid rgba(102, 192, 244, 0.3);
+      color: #66c0f4;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .footer-legend {
+      margin-top: 18px;
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 14px;
+      font-size: 11.5px;
+      font-family: 'Geist Mono', monospace;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #8f98a0;
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="diagram-card">
+    <div class="header">
+      <div>
+        <div class="eyebrow">Modül & Dosya Hiyerarşisi</div>
+        <h1>SteamLens AI — Proje Ağacı ve Görev Dağılımı</h1>
+      </div>
+      <div class="version-tag">Manifest V3 • Tree Architecture</div>
+    </div>
+
+    <!-- MAIN HIERARCHY TREE SVG -->
+    <svg viewBox="0 0 1120 540" role="img" aria-labelledby="tree-title tree-desc">
+      <title id="tree-title">SteamLens AI Proje Dosya Ağacı</title>
+      <desc id="tree-desc">Projedeki tüm kaynak dosyaları, arka plan servisleri, içerik betikleri, arayüz paneli ve dokümantasyon hiyerarşisi.</desc>
+
+      <defs>
+        <linearGradient id="g-root" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1e2c3d"/>
+          <stop offset="100%" stop-color="#141e2b"/>
+        </linearGradient>
+        <linearGradient id="g-src" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#19283c"/>
+          <stop offset="100%" stop-color="#111c2e"/>
+        </linearGradient>
+        <linearGradient id="g-content" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1c281e"/>
+          <stop offset="100%" stop-color="#111a13"/>
+        </linearGradient>
+        <linearGradient id="g-popup" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#261b38"/>
+          <stop offset="100%" stop-color="#171024"/>
+        </linearGradient>
+        <linearGradient id="g-docs" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#21262d"/>
+          <stop offset="100%" stop-color="#161b22"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ================= TREE CONNECTOR BRANCHES ================= -->
+
+      <!-- Root -> Level 1 branches -->
+      <!-- To src/ (Left-Center) -->
+      <path d="M 230 46 L 230 84 L 260 84" fill="none" stroke="#66c0f4" stroke-width="1.8"/>
+      
+      <!-- To Config & Docs (Right-Center) -->
+      <path d="M 230 46 L 230 84 L 840 84" fill="none" stroke="#8f98a0" stroke-width="1.5"/>
+
+      <!-- src/ -> Subdirectories -->
+      <!-- src -> background/ -->
+      <path d="M 120 180 L 120 220 L 140 220" fill="none" stroke="#66c0f4" stroke-width="1.5"/>
+
+      <!-- src -> content/ -->
+      <path d="M 360 180 L 360 220" fill="none" stroke="#a4d007" stroke-width="1.8"/>
+
+      <!-- src -> popup/ -->
+      <path d="M 590 180 L 590 220 L 590 220" fill="none" stroke="#b388ff" stroke-width="1.8"/>
+
+      <!-- Right Side Docs Branches from Hub -->
+      <path d="M 840 84 L 840 120" fill="none" stroke="#8f98a0" stroke-width="1.5"/>
+      <path d="M 840 120 L 760 120 L 760 144" fill="none" stroke="#8f98a0" stroke-width="1.5"/>
+      <path d="M 840 120 L 980 120 L 980 144" fill="none" stroke="#8f98a0" stroke-width="1.5"/>
+
+
+      <!-- ================= NODE BOXES ================= -->
+
+      <!-- ROOT NODE: steamlens-ai/ -->
+      <g transform="translate(40, 16)">
+        <rect width="380" height="60" rx="8" fill="url(#g-root)" stroke="#66c0f4" stroke-width="1.6"/>
+        <rect x="12" y="10" width="84" height="14" rx="3" fill="rgba(102,192,244,0.15)" stroke="#66c0f4" stroke-width="0.8"/>
+        <text x="54" y="20" fill="#66c0f4" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">PROJECT ROOT</text>
+        <text x="12" y="42" fill="#ffffff" font-size="15" font-family="'Geist Mono', monospace" font-weight="700">steamlens-ai/</text>
+        <text x="140" y="42" fill="#8f98a0" font-size="11" font-family="'Geist', sans-serif">Manifest V3 Chrome Extension</text>
+      </g>
+
+      <!-- ================= LEFT WING: CORE APPLICATION CODE (src/) ================= -->
+
+      <!-- BRANCH: src/ -->
+      <g transform="translate(40, 110)">
+        <rect width="650" height="70" rx="8" fill="url(#g-src)" stroke="#66c0f4" stroke-width="1.4"/>
+        <rect x="12" y="8" width="60" height="14" rx="3" fill="rgba(102,192,244,0.15)" stroke="#66c0f4" stroke-width="0.8"/>
+        <text x="42" y="18" fill="#66c0f4" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">SOURCE</text>
+        <text x="12" y="42" fill="#ffffff" font-size="14" font-family="'Geist Mono', monospace" font-weight="700">src/</text>
+        <text x="54" y="42" fill="#a0b3c6" font-size="11.5" font-family="'Geist', sans-serif">Eklentinin Çalışma Zamanı Modülleri (Runtime Code)</text>
+        <text x="12" y="58" fill="#626f80" font-size="9" font-family="'Geist Mono', monospace">├── background/   ├── content/   └── popup/</text>
+      </g>
+
+      <!-- 1. SUB-MODULE: src/background/ -->
+      <g transform="translate(40, 220)">
+        <rect width="200" height="290" rx="8" fill="#111822" stroke="#66c0f4" stroke-width="1.2"/>
+        <rect x="10" y="8" width="80" height="14" rx="3" fill="rgba(102,192,244,0.15)" stroke="#66c0f4" stroke-width="0.8"/>
+        <text x="50" y="18" fill="#66c0f4" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">BACKGROUND</text>
+        <text x="10" y="38" fill="#ffffff" font-size="12" font-family="'Geist Mono', monospace" font-weight="700">background/</text>
+        
+        <!-- File: service-worker.js -->
+        <g transform="translate(10, 52)">
+          <rect width="180" height="74" rx="6" fill="#172230" stroke="rgba(102,192,244,0.3)" stroke-width="0.8"/>
+          <text x="10" y="20" fill="#66c0f4" font-size="11" font-family="'Geist Mono', monospace" font-weight="600">service-worker.js</text>
+          <text x="10" y="36" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">• Yaşam döngüsü yönetimi</text>
+          <text x="10" y="50" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">• Chrome storage köprüsü</text>
+          <text x="10" y="64" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">• Eklenti kurulum dinleyicisi</text>
+        </g>
+
+        <g transform="translate(10, 138)">
+          <rect width="180" height="70" rx="6" fill="#141c26" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>
+          <text x="10" y="18" fill="#a0b3c6" font-size="10" font-family="'Geist', sans-serif" font-weight="600">Özellikler:</text>
+          <text x="10" y="34" fill="#626f80" font-size="9" font-family="'Geist', sans-serif">• Ephemeral (Geçici) SW</text>
+          <text x="10" y="48" fill="#626f80" font-size="9" font-family="'Geist', sans-serif">• Sıfır bellek tüketimi</text>
+          <text x="10" y="62" fill="#626f80" font-size="9" font-family="'Geist', sans-serif">• Manifest V3 uyumlu</text>
+        </g>
+      </g>
+
+      <!-- 2. SUB-MODULE: src/content/ (DOM & Dual-Engine) -->
+      <g transform="translate(255, 220)">
+        <rect width="250" height="290" rx="8" fill="url(#g-content)" stroke="#a4d007" stroke-width="1.4"/>
+        <rect x="10" y="8" width="94" height="14" rx="3" fill="rgba(164,208,7,0.15)" stroke="#a4d007" stroke-width="0.8"/>
+        <text x="57" y="18" fill="#a4d007" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">CONTENT SCRIPTS</text>
+        <text x="10" y="38" fill="#ffffff" font-size="12" font-family="'Geist Mono', monospace" font-weight="700">content/</text>
+
+        <!-- File 1: content.js -->
+        <g transform="translate(10, 48)">
+          <rect width="230" height="52" rx="5" fill="#172419" stroke="rgba(164,208,7,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#c4ea32" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">content.js</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Steam DOM enjeksiyonu, SPA 350ms</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">debounced observer, rozet senkronu</text>
+        </g>
+
+        <!-- File 2: ai-engine.js -->
+        <g transform="translate(10, 106)">
+          <rect width="230" height="54" rx="5" fill="#172419" stroke="rgba(164,208,7,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#c4ea32" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">ai-engine.js</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Çift motor boru hattı (Gemini 3.6 Flash</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">+ Kural Tabanlı Hızlı NLP &amp; Fallback)</text>
+        </g>
+
+        <!-- File 3: steam-api.js -->
+        <g transform="translate(10, 166)">
+          <rect width="230" height="52" rx="5" fill="#172419" stroke="rgba(164,208,7,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#c4ea32" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">steam-api.js</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Steam Web API istekleri, 3 katmanlı</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">spam, meme ve ASCII temizleme</text>
+        </g>
+
+        <!-- File 4: content.css -->
+        <g transform="translate(10, 224)">
+          <rect width="230" height="48" rx="5" fill="#172419" stroke="rgba(164,208,7,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#c4ea32" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">content.css</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Steam natif karanlık tema, rozetler,</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">kart stilleri ve skeleton animasyonu</text>
+        </g>
+      </g>
+
+      <!-- 3. SUB-MODULE: src/popup/ (Settings Control Panel) -->
+      <g transform="translate(520, 220)">
+        <rect width="220" height="290" rx="8" fill="url(#g-popup)" stroke="#b388ff" stroke-width="1.4"/>
+        <rect x="10" y="8" width="70" height="14" rx="3" fill="rgba(179,136,255,0.15)" stroke="#b388ff" stroke-width="0.8"/>
+        <text x="45" y="18" fill="#b388ff" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">POPUP UI</text>
+        <text x="10" y="38" fill="#ffffff" font-size="12" font-family="'Geist Mono', monospace" font-weight="700">popup/</text>
+
+        <!-- File 1: popup.html -->
+        <g transform="translate(10, 48)">
+          <rect width="200" height="52" rx="5" fill="#201530" stroke="rgba(179,136,255,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#d2adff" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">popup.html</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Canlı motor geçiş butonları,</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">dil ayarları ve BYOK API formu</text>
+        </g>
+
+        <!-- File 2: popup.js -->
+        <g transform="translate(10, 106)">
+          <rect width="200" height="66" rx="5" fill="#201530" stroke="rgba(179,136,255,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#d2adff" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">popup.js</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Dinamik Gemini model keşfi,</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">API test motoru ve</text>
+          <text x="8" y="56" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">anlık storage senkronizasyonu</text>
+        </g>
+
+        <!-- File 3: popup.css -->
+        <g transform="translate(10, 178)">
+          <rect width="200" height="50" rx="5" fill="#201530" stroke="rgba(179,136,255,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#d2adff" font-size="10.5" font-family="'Geist Mono', monospace" font-weight="600">popup.css</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">Neon/Karanlık Steam UI,</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="9" font-family="'Geist', sans-serif">segmented switch butonları</text>
+        </g>
+      </g>
+
+
+      <!-- ================= RIGHT WING: ASSETS, TESTS & CONFIGS ================= -->
+
+      <!-- GROUP 1: Visual Assets & Tests -->
+      <g transform="translate(755, 144)">
+        <rect width="165" height="366" rx="8" fill="url(#g-docs)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <rect x="10" y="8" width="90" height="14" rx="3" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+        <text x="55" y="18" fill="#c7d5e0" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">ASSETS &amp; TESTS</text>
+
+        <!-- icons/ -->
+        <g transform="translate(8, 36)">
+          <rect width="149" height="58" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#ffffff" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">icons/</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">16x16, 48x48, 128x128</text>
+          <text x="8" y="46" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Telifsiz PNG İkonlar</text>
+        </g>
+
+        <!-- generate_icons.py -->
+        <g transform="translate(8, 102)">
+          <rect width="149" height="50" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#ffffff" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">generate_icons.py</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Piksel Piksel Matematiksel</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">PNG İkon Üretici</text>
+        </g>
+
+        <!-- screenshots/ & assets/ -->
+        <g transform="translate(8, 160)">
+          <rect width="149" height="60" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#ffffff" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">screenshots/ &amp; assets/</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">1280x800 HD Mağaza</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">ve Mimari Şemaları</text>
+        </g>
+
+        <!-- test_logic.js -->
+        <g transform="translate(8, 228)">
+          <rect width="149" height="54" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#a4d007" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">test_logic.js</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Duygu Analizi &amp; Spam</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Birim Testleri (0 Hata)</text>
+        </g>
+      </g>
+
+      <!-- GROUP 2: Config & Documentation -->
+      <g transform="translate(930, 144)">
+        <rect width="160" height="366" rx="8" fill="url(#g-docs)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <rect x="10" y="8" width="70" height="14" rx="3" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+        <text x="45" y="18" fill="#c7d5e0" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" font-weight="600">CONFIG &amp; DOCS</text>
+
+        <!-- manifest.json -->
+        <g transform="translate(8, 36)">
+          <rect width="144" height="60" rx="5" fill="#161b22" stroke="rgba(102,192,244,0.3)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#66c0f4" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">manifest.json</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Manifest V3 Ayarları,</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Storage &amp; Host İzinleri</text>
+        </g>
+
+        <!-- README.md -->
+        <g transform="translate(8, 104)">
+          <rect width="144" height="54" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#ffffff" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">README.md</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Geliştirici &amp; Kullanıcı</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Kapsamlı Rehberi</text>
+        </g>
+
+        <!-- CHROMEWEBSTORE.md -->
+        <g transform="translate(8, 166)">
+          <rect width="144" height="58" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#ffffff" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">CHROMEWEBSTORE.md</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Mağaza İzin Gerekçeleri</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">ve Gizlilik Metinleri</text>
+        </g>
+
+        <!-- LICENSE -->
+        <g transform="translate(8, 232)">
+          <rect width="144" height="50" rx="5" fill="#161b22" stroke="rgba(255,255,255,0.08)" stroke-width="0.8"/>
+          <text x="8" y="16" fill="#ffffff" font-size="10" font-family="'Geist Mono', monospace" font-weight="600">LICENSE</text>
+          <text x="8" y="32" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">Resmi MIT Lisansı</text>
+          <text x="8" y="44" fill="#8f98a0" font-size="8.5" font-family="'Geist', sans-serif">(Açık Kaynak 2026)</text>
+        </g>
+      </g>
+
+    </svg>
+
+    <!-- FOOTER LEGEND -->
+    <div class="footer-legend">
+      <div class="legend-item">
+        <span class="dot" style="background:#66c0f4;"></span>
+        <span>Arka Plan &amp; Yaşam Döngüsü (`background/`)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background:#a4d007;"></span>
+        <span>DOM &amp; Çift Motor Analizi (`content/`)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background:#b388ff;"></span>
+        <span>Kontrol Paneli &amp; Ayarlar (`popup/`)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background:#8f98a0;"></span>
+        <span>Varlıklar, Testler &amp; Dokümantasyon</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

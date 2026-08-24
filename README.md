@@ -109,6 +109,12 @@ Bir oyunun 30$ veya 60$'a değip değmeyeceğini merak ediyorsunuz. Eklenti, oyu
 
 ## 📂 Proje Dosya Yapısı
 
+<div align="center">
+  <img src="assets/project-structure.png" alt="SteamLens AI Proje Dosya ve Modül Ağacı" width="100%">
+</div>
+
+<br>
+
 ```text
 steamlens-ai/
 ├── manifest.json              # Manifest V3 konfigürasyonu (Storage & Steam/Gemini Host İzinleri)
