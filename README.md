@@ -10,8 +10,22 @@
 
 **Steam mağazasındaki kullanıcı incelemelerini akıllı algoritmalar ve Google Gemini AI ile filtreleyip saniyeler içinde net bir oyun karnesine dönüştüren yeni nesil Chrome eklentisi.**
 
-[Özellikler](#-öne-çıkan-özellikler) • [Çözülen Problemler](#-çözülen-problemler) • [Kullanım Senaryoları](#-kullanım-senaryoları) • [Teknoloji Mimarisi](#-teknoloji-ve-mimari) • [Kurulum Rehberi](#-kurulum-rehberi) • [Gizlilik ve Güvenlik](#-gizlilik-ve-güvenlik)
+[Özellikler](#-öne-çıkan-özellikler) • [Ekran Görüntüleri](#-ekran-görüntüleri) • [Çözülen Problemler](#-çözülen-problemler) • [Kullanım Senaryoları](#-kullanım-senaryoları) • [Teknoloji Mimarisi](#-teknoloji-ve-mimari) • [Kurulum Rehberi](#-kurulum-rehberi) • [Gizlilik ve Güvenlik](#-gizlilik-ve-güvenlik)
 
+</div>
+
+---
+
+## 📸 Ekran Görüntüleri
+
+<div align="center">
+  <img src="screenshots/screenshot-1-gemini-ai.png" alt="SteamLens AI Gemini Modu" width="85%">
+  <p><em>Google Gemini Flash AI ile derinlemesine inceleme analizi ve oyun karnesi.</em></p>
+  
+  <br>
+
+  <img src="screenshots/screenshot-4-popup-settings.png" alt="SteamLens AI Ayarlar ve Motor Seçimi" width="55%">
+  <p><em>Kullanıcı dostu kontrol paneli ve canlı analiz motoru geçiş anahtarı.</em></p>
 </div>
 
 ---
