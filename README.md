@@ -92,24 +92,11 @@ Bir oyunun 30$ veya 60$'a değip değmeyeceğini merak ediyorsunuz. Eklenti, oyu
 
 ## 🛠️ Teknoloji ve Mimari
 
-```
-Steam Store Game Page (DOM)
-        │
-        ▼
-[content.js] ── (SPA MutationObserver + 350ms Debounce)
-        │
-        ├──► [steam-api.js] ──► Steam Web API (appreviews JSON)
-        │                           │
-        │                           ▼ (Spam/Meme Cleaning)
-        │
-        └──► [ai-engine.js]
-                ├──► Mod: Gemini AI ──► Google Generative AI REST API (gemini-3.6-flash)
-                │                               │ (Fallback)
-                └──► Mod: Hızlı NLP  ◄──────────┘
-                        │
-                        ▼ (Pure JS RegEx + Statistical Sentiment Analyzer)
-                [Structured JSON Result Card]
-```
+<div align="center">
+  <img src="assets/architecture.png" alt="SteamLens AI Mimari ve Veri Akış Şeması" width="100%">
+</div>
+
+<br>
 
 - **Manifest V3:** Modern Chrome eklenti standartlarına %100 uyumlu mimari.
 - **Modern Vanilla JavaScript (ES6+):** Harici kütüphane bağımlılığı olmadan maksimum hız ve sıfır bundle boyutu.
