@@ -10,7 +10,7 @@
 
 **Steam mağazasındaki kullanıcı incelemelerini akıllı algoritmalar ve Google Gemini AI ile filtreleyip saniyeler içinde net bir oyun karnesine dönüştüren yeni nesil Chrome eklentisi.**
 
-[Özellikler](#-öne-çıkan-özellikler) • [Ekran Görüntüleri](#-ekran-görüntüleri) • [Çözülen Problemler](#-çözülen-problemler) • [Kullanım Senaryoları](#-kullanım-senaryoları) • [Teknoloji Mimarisi](#-teknoloji-ve-mimari) • [Kurulum Rehberi](#-kurulum-rehberi) • [Gizlilik ve Güvenlik](#-gizlilik-ve-güvenlik)
+[📸 Ekran Görüntüleri](#-ekran-görüntüleri) • [🎯 Projenin Amacı](#-projenin-amacı) • [🚀 Öne Çıkan Özellikler](#-öne-çıkan-özellikler) • [🧩 Çözülen Problemler](#-çözülen-problemler) • [🎮 Kullanım Senaryoları](#-gerçek-kullanım-senaryoları) • [🛠️ Teknoloji & Mimari](#-teknoloji-ve-mimari) • [📂 Proje Yapısı](#-proje-dosya-yapısı) • [📦 Kurulum Rehberi](#-kurulum-rehberi) • [🔒 Gizlilik & Güvenlik](#-gizlilik-ve-güvenlik)
 
 </div>
 
@@ -104,6 +104,35 @@ Bir oyunun 30$ veya 60$'a değip değmeyeceğini merak ediyorsunuz. Eklenti, oyu
 - **Google Generative Language API:** BYOK (Bring Your Own Key) modeliyle kullanıcının kendi anahtarı üzerinden `gemini-3.6-flash` ile doğrudan haberleşir.
 - **Chrome Storage Local API:** Ayarlar, dil tercihleri ve API anahtarları tamamen kullanıcının yerel tarayıcısında saklanır.
 - **Debounced MutationObserver:** Steam'in dinamik sayfa geçişlerini (SPA) tarayıcıyı yormadan (350 ms geciktirmeli) akıllıca takip eder.
+
+---
+
+## 📂 Proje Dosya Yapısı
+
+```text
+steamlens-ai/
+├── manifest.json              # Manifest V3 konfigürasyonu (Storage & Steam/Gemini Host İzinleri)
+├── icons/                     # 16x16, 48x48, 128x128 boyutunda telifsiz saf PNG ikonlar
+├── generate_icons.py          # Standart Python ile matematiksel PNG ikon oluşturucu
+├── screenshots/               # Mağaza ve GitHub için 1280x800 HD ekran görüntüleri
+├── assets/                    # Mimari şeması (architecture.html & architecture.png)
+├── test_logic.js              # Duygu analizi ve spam temizleme birim testleri (Unit Tests)
+├── src/
+│   ├── background/
+│   │   └── service-worker.js  # Yaşam döngüsü, storage yönetimi ve mesaj köprüsü
+│   ├── content/
+│   │   ├── steam-api.js       # Steam Public API istemcisi, 3 katmanlı BBCode ve spam/meme filtresi
+│   │   ├── ai-engine.js       # Çift Motorlu Analiz Motoru (Google Gemini 3.6 Flash + Kural Tabanlı Hızlı NLP)
+│   │   ├── content.js         # Steam DOM enjeksiyonu, SPA 350ms debounced observer, dinamik rozet & panoya kopyalama
+│   │   └── content.css        # Steam natif dark temalı modern arayüz, skeleton ve animasyonlar
+│   └── popup/
+│       ├── popup.html         # Canlı motor geçiş anahtarı (Kural Tabanlı / Gemini AI), dil tercihleri ve BYOK paneli
+│       ├── popup.css          # Steam karanlık/neon temalı açılır kontrol paneli
+│       └── popup.js           # Dinamik Gemini model keşfi, API test mekanizması ve anlık ayar senkronizasyonu
+├── README.md                  # Kapsamlı geliştirici & kullanıcı dokümantasyonu, ekran görüntüleri ve mimari şema
+├── LICENSE                    # Resmi MIT Lisansı (Copyright 2026 Harun)
+└── CHROMEWEBSTORE.md          # Chrome Web Store yayınlama kılavuzu, izin gerekçeleri ve mağaza metinleri
+```
 
 ---
 
