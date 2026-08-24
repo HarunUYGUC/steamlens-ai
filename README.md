@@ -19,7 +19,7 @@
 ## 📸 Ekran Görüntüleri
 
 <div align="center">
-  <img src="screenshots/screenshot-1-gemini-ai.png" alt="SteamLens AI Gemini Modu" width="85%">
+  <img src="screenshots/screenshot-2-gemini-ai.png" alt="SteamLens AI Gemini Modu" width="85%">
   <p><em>Google Gemini Flash AI ile derinlemesine inceleme analizi ve oyun karnesi.</em></p>
   
   <br>
