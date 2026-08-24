@@ -113,7 +113,7 @@ Bir oyunun 30$ veya 60$'a değip değmeyeceğini merak ediyorsunuz. Eklenti, oyu
 
 1. Bu projeyi bilgisayarınıza klonlayın veya indirin:
    ```bash
-   git clone https://github.com/kullaniciadi/steamlens-ai.git
+   git clone https://github.com/HarunUYGUC/steamlens-ai.git
    ```
 2. Google Chrome'u açın ve adres çubuğuna `chrome://extensions` yazın.
 3. Sağ üst köşedeki **"Geliştirici modu" (Developer mode)** anahtarını aktif hale getirin.
