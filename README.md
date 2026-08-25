@@ -27,7 +27,7 @@
   
   <br>
 
-  <img src="screenshots/screenshot-4-popup-settings.png" alt="SteamLens AI Ayarlar ve Motor Seçimi" width="55%">
+  <img src="screenshots/screenshot-4-turkce-popup-settings.png" alt="SteamLens AI Ayarlar ve Motor Seçimi" width="55%">
   <p><em>Kullanıcı dostu kontrol paneli, dil seçimi ve canlı analiz motoru geçiş anahtarı.</em></p>
 </div>
 
