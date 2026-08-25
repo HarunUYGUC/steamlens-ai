@@ -48,7 +48,7 @@ Steam'de bir oyun satın almayı düşündüğünüzde karşınıza binlerce kul
 
 SteamLens AI, global Steam topluluğuna hitap etmek üzere tam **İki Dilli (İngilizce 🇬🇧 & Türkçe 🇹🇷)** altyapıya sahiptir:
 * **Otomatik Dil Algılama:** Tarayıcı arayüz diline göre eklenti varsayılan olarak doğru dille başlar.
-* **Canlı Dil Değiştirme:** Popup ayarlarından tek tıkla `🌐 Otomatik`, `🇹🇷 Türkçe` veya `🇬🇧 English` seçilebilir.
+* **Canlı Dil Değiştirme:** Popup ayarlarından tek tıkla **🌐 Otomatik**, **🇹🇷 Türkçe** veya **🇬🇧 English** seçilebilir.
 * **Bilingual Analiz Motoru:** Hem Google Gemini AI hem de Hızlı Kural Tabanlı NLP motoru seçilen dilde dinamik rapor üretir.
 * **Chrome Web Store Uyumlu:** `_locales/` klasörüyle mağazada global kullanıcılara otomatik İngilizce, Türkiye'deki kullanıcılara Türkçe görünür.
 
@@ -115,7 +115,7 @@ Bir oyunun 30$ veya 60$'a değip değmeyeceğini merak ediyorsunuz. Eklenti, oyu
 - **Standart Chrome i18n (`_locales`):** Global Web Store ve tarayıcı yerelleştirmesi.
 - **Modern Vanilla JavaScript (ES6+):** Harici kütüphane bağımlılığı olmadan maksimum hız ve sıfır bundle boyutu.
 - **Steam Web Reviews API:** Steam mağaza incelemelerini doğrudan `https://store.steampowered.com/appreviews/<appid>` üzerinden çeker.
-- **Google Generative Language API:** BYOK (Bring Your Own Key) modeliyle kullanıcının kendi anahtarı üzerinden `gemini-3.6-flash` ile doğrudan haberleşir.
+- **Google Generative Language API:** BYOK (Bring Your Own Key — Kendi Anahtarını Getir) modeliyle kullanıcının kendi anahtarı üzerinden `gemini-3.6-flash` ile doğrudan haberleşir.
 - **Chrome Storage Local API:** Ayarlar, dil tercihleri ve API anahtarları tamamen kullanıcının yerel tarayıcısında saklanır.
 - **Debounced MutationObserver:** Steam'in dinamik sayfa geçişlerini (SPA) tarayıcıyı yormadan (350 ms geciktirmeli) akıllıca takip eder.
 
@@ -185,7 +185,7 @@ steamlens-ai/
 ## 🔒 Gizlilik ve Güvenlik
 
 - **Sıfır İzleme / Sıfır Telemetri:** Eklenti hiçbir kullanıcı verisini, ziyaret edilen sayfaları veya arama geçmişini toplamaz veya harici sunuculara göndermez.
-- **Yerel BYOK Modeli:** Google Gemini API anahtarınız kaynak kodlarda yer almaz; yalnızca kendi bilgisayarınızdaki izole `chrome.storage.local` alanında tutulur.
+- **Yerel BYOK Modeli (Bring Your Own Key — Kendi Anahtarını Getir):** Google Gemini API anahtarınız kaynak kodlarda yer almaz; yalnızca kendi bilgisayarınızdaki izole `chrome.storage.local` alanında tutulur.
 
 ---
 
