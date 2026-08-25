@@ -6,6 +6,7 @@
 chrome.runtime.onInstalled.addListener(async (details) => {
   try {
     const existing = await chrome.storage.local.get([
+      'uiLanguage',
       'preferredLanguage',
       'geminiApiKey',
       'reviewLimit',
@@ -13,6 +14,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     ]);
 
     const defaults = {};
+    if (existing.uiLanguage === undefined) defaults.uiLanguage = 'auto';
     if (existing.preferredLanguage === undefined) defaults.preferredLanguage = 'all';
     if (existing.geminiApiKey === undefined) defaults.geminiApiKey = '';
     if (existing.reviewLimit === undefined) defaults.reviewLimit = 60;
@@ -36,6 +38,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ status: 'PONG', timestamp: Date.now() });
       } else if (message.type === 'GET_SETTINGS') {
         const settings = await chrome.storage.local.get([
+          'uiLanguage',
           'preferredLanguage',
           'geminiApiKey',
           'reviewLimit'

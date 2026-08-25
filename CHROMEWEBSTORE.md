@@ -1,20 +1,68 @@
-# Chrome Web Store Yayınlama Paketi & Meta Verileri
-
-## 1. Temel Bilgiler
-
-- **Uzantı Adı (Extension Name):** `SteamLens AI — Steam İnceleme Özeti`
-- **Kısa Açıklama (Summary / Short Description - Max 132 chars):**
-  `Steam mağazasındaki incelemeleri akıllı NLP ve Google Gemini AI ile anında özetleyen yapay zeka asistanı.`
-- **Kategori:** Üretkenlik / Alışveriş & Eğlence (Productivity / Shopping)
-- **Sürüm (Version):** `1.2.0`
-- **Varsayılan Dil:** Türkçe (tr) — İngilizce desteği dahil.
+# Chrome Web Store Yayınlama Paketi & Meta Verileri / Store Metadata
 
 ---
 
-## 2. Detaylı Mağaza Açıklaması (Store Listing Description)
+## 🇬🇧 English Store Listing (Global Default)
+
+### 1. Basic Metadata
+- **Extension Name:** `SteamLens AI — Steam Review Summarizer`
+- **Short Description (Max 132 chars):**
+  `AI assistant that instantly filters and summarizes Steam reviews using smart NLP and Google Gemini AI.`
+- **Category:** Productivity / Shopping & Entertainment
+- **Default Locale:** `en` (with Turkish `tr` locale included)
+- **Version:** `1.3.0`
+
+### 2. Store Listing Description (English)
 
 ```markdown
-🎮 SteamLens AI — Steam İnceleme Özeti
+🎮 SteamLens AI — Steam Review Summarizer & Analysis Assistant
+
+Tired of scrolling through hundreds of joke reviews, ASCII cats, and meme copypastas just to see if a game is worth buying?
+SteamLens AI scans Steam community reviews in seconds, cleans out spam and unhelpful noise, and delivers a clear, objective game scorecard.
+
+🚀 KEY FEATURES:
+
+✅ Dual-Engine Architecture:
+- 🚀 Fast Rule-Based NLP (Default): Zero latency, zero GPU/network load, runs in 0.01s with instant statistical sentiment analysis.
+- ⚡ Cloud Gemini AI: Synthesizes complex player sentiment, nuanced complaints, and constructive gameplay feedback using Google Gemini.
+
+✅ Smart Spam & Meme Filter:
+- Automatically filters out "10/10", ASCII art, one-word spam, and point-farming copypastas to evaluate only constructive reviews.
+
+✅ Comprehensive Game Scorecard:
+- 💡 Clear Verdict & Purchase Recommendation
+- ⚡ Optimization & Performance Score (0-100%)
+- 🟢 Key Strengths (Pros)
+- 🔴 Critical Issues & Complaints (Cons)
+- ⚡ Recent Updates & Patch Status
+- ⏱️ Price / Time / Value Analysis
+- 📊 Community Approval & Average Playtime
+
+✅ 100% Privacy-Focused:
+- Zero user data collection or telemetry.
+- Optional API keys are stored locally on your device (`chrome.storage.local`).
+- Zero background idle resource usage.
+
+How to Use:
+1. Install SteamLens AI.
+2. Navigate to any Steam game store page.
+3. Click "Summarize Reviews with SteamLens AI" to get an instant report!
+```
+
+---
+
+## 🇹🇷 Türkçe Mağaza Bilgileri (Turkish Locale)
+
+### 1. Temel Bilgiler
+- **Uzantı Adı:** `SteamLens AI — Steam İnceleme Özeti`
+- **Kısa Açıklama (Maks. 132 karakter):**
+  `Steam mağazasındaki incelemeleri akıllı NLP ve Google Gemini AI ile anında özetleyen yapay zeka asistanı.`
+- **Kategori:** Üretkenlik / Alışveriş & Eğlence
+
+### 2. Detaylı Mağaza Açıklaması (Türkçe)
+
+```markdown
+🎮 SteamLens AI — Steam İnceleme Özeti ve Analiz Asistanı
 
 Steam'de bir oyunu satın almadan önce yüzlerce incelemeyi tek tek okumaktan yoruldunuz mu?
 SteamLens AI, oyun sayfalarındaki topluluk incelemelerini tarar, spam ve meme yorumları filtreler ve saniyeler içinde tarafsız, kapsamlı bir özet çıkarır.
@@ -30,6 +78,7 @@ SteamLens AI, oyun sayfalarındaki topluluk incelemelerini tarar, spam ve meme y
 
 ✅ Kapsamlı Oyun Karnesi:
 - 💡 Genel Değerlendirme & Satın Alma Tavsiyesi
+- ⚡ Optimizasyon Sağlık Skoru (%0 - %100)
 - 🟢 Güçlü Yönler (Artılar)
 - 🔴 Kritik Sorunlar & Şikayetler (Eksiler)
 - ⚡ Son Güncellemeler & Yama Durumu
@@ -38,7 +87,7 @@ SteamLens AI, oyun sayfalarındaki topluluk incelemelerini tarar, spam ve meme y
 
 ✅ Gizlilik ve Güvenlik Odaklı:
 - Verileriniz asla üçüncü taraflarla paylaşılmaz.
-- API anahtarlarınız yalnızca kendi tarayıcınızda (yerel olarak) güvenle saklanır.
+- API anahtarlarınız yalnızca kendi tarayıcınızda (yerel olarak) saklanır.
 - Sıfır GPU ve sıfır arka plan yükü.
 
 Nasıl Kullanılır?
@@ -51,20 +100,18 @@ Nasıl Kullanılır?
 
 ## 3. İzinler ve Gerekçeleri (Permissions Justification)
 
-Chrome Web Store inceleme ekibi için hazırlanmış resmi izin gerekçeleri:
-
 1. **`storage` İzni:**
-   - *Gerekçe:* Kullanıcının seçtiği dil tercihini (Tüm Diller / Türkçe / İngilizce), taranacak yorum adedini, aktif motor modunu ve isteğe bağlı Google Gemini API anahtarını tarayıcıda yerel olarak saklamak için kullanılır.
+   - *Justification / Gerekçe:* Stores user preferences (UI language, review limit, engine mode, and optional local Gemini API key) safely in browser local storage.
 
 2. **`host_permissions` (`https://store.steampowered.com/*`):**
-   - *Gerekçe:* Steam mağazasındaki oyun sayfalarına analiz butonunu yerleştirmek ve Steam'in resmi açık Web API'sinden (`appreviews`) oyun incelemelerini çekmek için gereklidir.
+   - *Justification / Gerekçe:* Required to inject the review summary button on Steam store pages and fetch review data via Steam's public Web API (`appreviews`).
 
 3. **`host_permissions` (`https://generativelanguage.googleapis.com/*`):**
-   - *Gerekçe:* Kullanıcı kendi Google Gemini API anahtarını girmeyi tercih ettiğinde, incelemelerin Google AI Studio üzerinden güvenle özetlenmesini sağlamak için kullanılır.
+   - *Justification / Gerekçe:* Required for optional Bring-Your-Own-Key Google Gemini AI cloud analysis when the user opts into Gemini mode.
 
 ---
 
 ## 4. Gizlilik Beyanı (Privacy Policy)
 
-- SteamLens AI, kullanıcıların kişisel verilerini, tarama geçmişini veya kimlik bilgilerini **asla toplamaz, saklamaz veya üçüncü şahıslara satmaz**.
-- Tüm analizler doğrudan kullanıcının tarayıcısında veya kullanıcının kendi API anahtarıyla Google AI Studio üzerinde gerçekleştirilir.
+- SteamLens AI does not collect, track, or share any user personal data, browsing history, or identities.
+- All analyses are processed directly in the user's browser or via the user's personal Google AI Studio API key.

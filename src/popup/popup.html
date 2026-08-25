@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SteamLens AI — Steam İnceleme Özeti</title>
+  <title>SteamLens AI — Steam Review Summarizer</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -13,24 +13,24 @@
       <div class="brand">
         <div class="brand-logo">🤖</div>
         <div>
-          <h1 class="brand-title">SteamLens AI</h1>
-          <p class="brand-sub">Steam İnceleme Özeti</p>
+          <h1 class="brand-title" data-i18n="brandTitle">SteamLens AI</h1>
+          <p class="brand-sub" data-i18n="brandSubtitle">Steam İnceleme Özeti</p>
         </div>
       </div>
-      <span class="version-badge" id="popup-version-badge">v1.2.0</span>
+      <span class="version-badge" id="popup-version-badge">v1.3.0</span>
     </header>
 
     <!-- Engine Mode Toggle / Switch -->
     <section class="mode-toggle-section">
       <div class="mode-toggle-header">
-        <span class="mode-label">⚡ Aktif Analiz Motoru</span>
+        <span class="mode-label" data-i18n="activeEngineLabel">⚡ Aktif Analiz Motoru</span>
         <span class="status-pill ready" id="engine-status-pill">🚀 Hızlı NLP</span>
       </div>
       <div class="segmented-control">
-        <button type="button" class="segment-btn active" id="btn-mode-rule" data-mode="rule">
+        <button type="button" class="segment-btn active" id="btn-mode-rule" data-mode="rule" data-i18n="btnModeRule">
           🚀 Kural Tabanlı (Hızlı)
         </button>
-        <button type="button" class="segment-btn" id="btn-mode-gemini" data-mode="gemini">
+        <button type="button" class="segment-btn" id="btn-mode-gemini" data-mode="gemini" data-i18n="btnModeGemini">
           ⚡ Gemini AI (Bulut)
         </button>
       </div>
@@ -41,56 +41,66 @@
 
     <!-- Settings Form -->
     <section class="settings-section">
-      <h2 class="section-heading">⚙️ Tercihler & Ayarlar</h2>
+      <h2 class="section-heading" data-i18n="settingsHeading">⚙️ Tercihler & Ayarlar</h2>
 
-      <!-- Language Selection -->
+      <!-- UI / Output Language Selection -->
       <div class="form-group">
-        <label for="pref-language">Taranacak İnceleme Dili</label>
+        <label for="pref-ui-language" data-i18n="prefUiLanguageLabel">Arayüz ve Çıktı Dili</label>
+        <select id="pref-ui-language" class="form-select">
+          <option value="auto" data-i18n="prefUiLangAuto">🌐 Otomatik (Tarayıcı Dili)</option>
+          <option value="tr" data-i18n="prefUiLangTr">🇹🇷 Türkçe</option>
+          <option value="en" data-i18n="prefUiLangEn">🇬🇧 English</option>
+        </select>
+      </div>
+
+      <!-- Reviews Source Language Selection -->
+      <div class="form-group">
+        <label for="pref-language" data-i18n="prefReviewLanguageLabel">Taranacak İnceleme Dili</label>
         <select id="pref-language" class="form-select">
-          <option value="all">🌐 Tüm Diller (Önerilen)</option>
-          <option value="turkish">🇹🇷 Yalnızca Türkçe</option>
-          <option value="english">🇬🇧 Yalnızca İngilizce</option>
+          <option value="all" data-i18n="prefReviewLangAll">🌐 Tüm Diller (Önerilen)</option>
+          <option value="turkish" data-i18n="prefReviewLangTr">🇹🇷 Yalnızca Türkçe</option>
+          <option value="english" data-i18n="prefReviewLangEn">🇬🇧 Yalnızca İngilizce</option>
         </select>
       </div>
 
       <!-- Review Limit -->
       <div class="form-group">
-        <label for="pref-limit">Taranacak İnceleme Sayısı</label>
+        <label for="pref-limit" data-i18n="prefLimitLabel">Taranacak İnceleme Sayısı</label>
         <select id="pref-limit" class="form-select">
-          <option value="40">40 İnceleme (En Hızlı)</option>
-          <option value="60" selected>60 İnceleme (Dengeli)</option>
-          <option value="80">80 İnceleme (Kapsamlı)</option>
-          <option value="100">100 İnceleme (Maksimum Detay)</option>
+          <option value="40" data-i18n="prefLimit40">40 İnceleme (En Hızlı)</option>
+          <option value="60" selected data-i18n="prefLimit60">60 İnceleme (Dengeli)</option>
+          <option value="80" data-i18n="prefLimit80">80 İnceleme (Kapsamlı)</option>
+          <option value="100" data-i18n="prefLimit100">100 İnceleme (Maksimum Detay)</option>
         </select>
       </div>
 
       <!-- Optional BYOK Gemini API Key -->
       <div class="form-group">
         <div class="label-with-badge">
-          <label for="gemini-key">Google Gemini API Anahtarı</label>
-          <span class="opt-badge">Gemini Modu İçin</span>
+          <label for="gemini-key" data-i18n="geminiKeyLabel">Google Gemini API Anahtarı</label>
+          <span class="opt-badge" data-i18n="geminiKeyBadge">Gemini Modu İçin</span>
         </div>
         <div class="input-action-row">
           <input type="password" id="gemini-key" class="form-input" placeholder="AIzaSy..." autocomplete="off">
           <button type="button" id="btn-toggle-key" class="icon-btn" title="Göster/Gizle">👁️</button>
-          <button type="button" id="btn-test-key" class="secondary-btn" title="Test Et">Test</button>
+          <button type="button" id="btn-test-key" class="secondary-btn" title="Test Et" data-i18n="btnTestKeyText">Test</button>
         </div>
-        <span class="input-hint" id="key-test-hint">
+        <span class="input-hint" id="key-test-hint" data-i18n="geminiKeyHint">
           Bulut AI için <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#66c0f4;">Google AI Studio</a>'dan ücretsiz anahtar alabilirsiniz.
         </span>
       </div>
 
       <!-- Action Buttons -->
       <div class="button-row">
-        <button type="button" id="btn-save" class="primary-btn">💾 Ayarları Kaydet</button>
-        <button type="button" id="btn-clear-cache" class="ghost-btn" title="Önbelleği temizle">🗑️ Sıfırla</button>
+        <button type="button" id="btn-save" class="primary-btn" data-i18n="btnSave">💾 Ayarları Kaydet</button>
+        <button type="button" id="btn-clear-cache" class="ghost-btn" title="Önbelleği temizle" data-i18n="btnClearCache">🗑️ Sıfırla</button>
       </div>
     </section>
 
     <!-- Quick Guide Footer -->
     <footer class="popup-footer">
       <div class="quick-guide">
-        <span>🎮 <strong>Kullanım:</strong> İstediğiniz zaman yukarıdaki butonla <strong>Kural Tabanlı</strong> ve <strong>Gemini AI</strong> arasında geçiş yapabilirsiniz.</span>
+        <span id="quick-guide-text" data-i18n="quickGuideText">🎮 <strong>Kullanım:</strong> İstediğiniz zaman yukarıdaki butonla <strong>Kural Tabanlı</strong> ve <strong>Gemini AI</strong> arasında geçiş yapabilirsiniz.</span>
       </div>
     </footer>
 
@@ -98,6 +108,7 @@
     <div id="popup-toast" class="popup-toast">Ayarlar kaydedildi!</div>
   </div>
 
+  <script src="../shared/i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

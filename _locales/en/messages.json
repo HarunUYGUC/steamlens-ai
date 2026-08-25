@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "SteamLens AI — Steam Review Summarizer",
+    "description": "The title of the extension in the Chrome Web Store and browser toolbar."
+  },
+  "appDescription": {
+    "message": "AI assistant that instantly filters and summarizes Steam reviews using smart NLP and Google Gemini AI.",
+    "description": "Short description of the extension."
+  },
+  "actionTitle": {
+    "message": "SteamLens AI — Steam Review Summarizer",
+    "description": "Tooltip shown when hovering over the extension icon."
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * SteamLens AI — Analysis Engine
- * Dual-Engine Architecture:
+ * Dual-Engine Architecture with Full Internationalization (EN / TR):
  * 1. Cloud Gemini Flash (User chosen Gemini mode via Google AI Studio)
  * 2. High-Speed Rule-Based NLP & Statistical Sentiment Analyzer (User chosen Rule mode or fallback)
  */
@@ -9,37 +9,44 @@ class SteamLensAIEngine {
   /**
    * Main entry point to analyze reviews.
    * @param {Object} processedData - Result from SteamApiClient.processReviews
-   * @param {Object} options - { engineMode, preferredLanguage, geminiApiKey, onProgress }
+   * @param {Object} options - { engineMode, uiLanguage, preferredLanguage, geminiApiKey, onProgress }
    * @returns {Promise<Object>} Analysis result with tier badge and structured summary
    */
   static async analyze(processedData, options = {}) {
     const {
       engineMode = 'rule',
       geminiApiKey = '',
+      uiLanguage = 'auto',
       preferredLanguage = 'all',
       onProgress = () => {}
     } = options;
 
+    const i18n = (typeof window !== 'undefined' && window.SteamLensI18n) ? window.SteamLensI18n : null;
+    const lang = i18n ? i18n.resolveLanguage(uiLanguage) : (uiLanguage === 'tr' ? 'tr' : 'en');
+    const t = (k, p) => i18n ? i18n.t(k, lang, p) : k;
+
     const { validReviews, stats, totalFetched, validCount, querySummary } = processedData;
 
     if (!validReviews || validReviews.length === 0) {
-      return this.generateEmptyResult();
+      return this.generateEmptyResult(lang);
     }
 
     // --- 1. CLOUD GEMINI FLASH (When user selected Gemini Mode) ---
     if (engineMode === 'gemini' && geminiApiKey && geminiApiKey.trim().length > 15) {
       try {
-        onProgress({ tier: 'cloud', status: 'running', message: 'Google Gemini AI ile bulut analizi yapılıyor...' });
-        const cloudResult = await this.runCloudGeminiAnalysis(validReviews, stats, geminiApiKey.trim());
+        onProgress({ tier: 'cloud', status: 'running', message: t('loadingGeminiCloud') });
+        const cloudResult = await this.runCloudGeminiAnalysis(validReviews, stats, geminiApiKey.trim(), lang);
         if (cloudResult) {
+          const modelName = cloudResult.modelUsed || 'Flash';
           return {
-            tier: `Gemini AI (${cloudResult.modelUsed || 'Flash'})`,
+            tier: t('tierGeminiAI', { model: modelName }),
             tierCode: 'cloud',
             isAI: true,
             ...cloudResult,
             stats,
             totalFetched: totalFetched || validReviews.length,
-            validCount: validCount || validReviews.length
+            validCount: validCount || validReviews.length,
+            language: lang
           };
         }
       } catch (cloudError) {
@@ -48,34 +55,44 @@ class SteamLensAIEngine {
     }
 
     // --- 2. HIGH-SPEED RULE-BASED NLP & STATISTICAL ANALYZER (Rule Mode or Safe Fallback) ---
-    onProgress({ tier: 'rule', status: 'running', message: 'Kural tabanlı NLP analiz motoru devrede...' });
-    const ruleResult = this.runRuleBasedAnalysis(validReviews, stats);
+    onProgress({ tier: 'rule', status: 'running', message: t('loadingRuleNLP') });
+    const ruleResult = this.runRuleBasedAnalysis(validReviews, stats, lang);
     return {
-      tier: 'Kural Tabanlı NLP & İstatistik',
+      tier: t('tierRuleNLP'),
       tierCode: 'rule',
       isAI: false,
       ...ruleResult,
       stats,
       totalFetched: totalFetched || validReviews.length,
-      validCount: validCount || validReviews.length
+      validCount: validCount || validReviews.length,
+      language: lang
     };
   }
 
   /**
-   * Runs analysis using Google AI Studio BYOK Gemini API with model fallback.
+   * Runs analysis using Google AI Studio BYOK Gemini API with model fallback and language adaptation.
    */
-  static async runCloudGeminiAnalysis(reviews, stats, apiKey) {
+  static async runCloudGeminiAnalysis(reviews, stats, apiKey, lang = 'en') {
     const cleanKey = apiKey.trim();
     const posReviews = reviews.filter(r => r.votedUp).slice(0, 10);
     const negReviews = reviews.filter(r => !r.votedUp).slice(0, 10);
 
-    let promptContext = `Topluluk Onayı: %${stats.positivePercentage}, Ortalama Oynanış: ${stats.avgPlaytimeHours} saat\n\n`;
-    promptContext += `--- OLUMLU İNCELEMELER ---\n`;
-    posReviews.forEach((r, i) => promptContext += `[#${i + 1}]: ${r.text.substring(0, 200)}\n`);
-    promptContext += `\n--- OLUMSUZ İNCELEMELER ---\n`;
-    negReviews.forEach((r, i) => promptContext += `[#${i + 1}]: ${r.text.substring(0, 200)}\n`);
+    let promptContext = '';
+    if (lang === 'tr') {
+      promptContext = `Topluluk Onayı: %${stats.positivePercentage}, Ortalama Oynanış: ${stats.avgPlaytimeHours} saat\n\n`;
+      promptContext += `--- OLUMLU İNCELEMELER ---\n`;
+      posReviews.forEach((r, i) => promptContext += `[#${i + 1}]: ${r.text.substring(0, 200)}\n`);
+      promptContext += `\n--- OLUMSUZ İNCELEMELER ---\n`;
+      negReviews.forEach((r, i) => promptContext += `[#${i + 1}]: ${r.text.substring(0, 200)}\n`);
+    } else {
+      promptContext = `Community Approval: ${stats.positivePercentage}%, Average Playtime: ${stats.avgPlaytimeHours} hours\n\n`;
+      promptContext += `--- POSITIVE REVIEWS ---\n`;
+      posReviews.forEach((r, i) => promptContext += `[#${i + 1}]: ${r.text.substring(0, 200)}\n`);
+      promptContext += `\n--- NEGATIVE REVIEWS ---\n`;
+      negReviews.forEach((r, i) => promptContext += `[#${i + 1}]: ${r.text.substring(0, 200)}\n`);
+    }
 
-    const systemInstruction = `Sen uzman bir Steam oyun inceleme ve değerlendirme asistanısın. Sana verilen kullanıcı yorumlarını analiz et ve geçerli bir JSON objesi olarak şu formatta Türkçe yanıt ver:
+    const systemInstruction = lang === 'tr' ? `Sen uzman bir Steam oyun inceleme ve değerlendirme asistanısın. Sana verilen kullanıcı yorumlarını analiz et ve geçerli bir JSON objesi olarak şu formatta Türkçe yanıt ver:
 {
   "verdict": "Oyun hakkında 2 cümlelik genel değerlendirme ve net satın alma tavsiyesi.",
   "optimizationScore": 85,
@@ -91,6 +108,22 @@ class SteamLensAIEngine {
   ],
   "patchImpact": "Son güncellemelerin veya yamaların oyuna etkisi.",
   "valueAnalysis": "Fiyat, oynanış süresi ve içerik doyuruculuğu analizi."
+}` : `You are an expert Steam video game review analyst. Analyze the user reviews provided and return a valid JSON object strictly matching this schema in English:
+{
+  "verdict": "A 2-sentence comprehensive evaluation of the game with a clear purchase recommendation.",
+  "optimizationScore": 85,
+  "optimizationSummary": "1 concise sentence summarizing performance, framerates, stuttering, and stability.",
+  "pros": [
+    "Key strength 1",
+    "Key strength 2",
+    "Key strength 3"
+  ],
+  "cons": [
+    "Criticism or technical issue 1",
+    "Criticism or technical issue 2"
+  ],
+  "patchImpact": "Impact of recent updates, patches, and developer support.",
+  "valueAnalysis": "Evaluation of price, content volume, and average playtime value."
 }`;
 
     const candidateModels = [
@@ -111,7 +144,7 @@ class SteamLensAIEngine {
           contents: [
             {
               role: 'user',
-              parts: [{ text: `${systemInstruction}\n\nİncelenecek Yorumlar:\n${promptContext}` }]
+              parts: [{ text: `${systemInstruction}\n\n${lang === 'tr' ? 'İncelenecek Yorumlar:' : 'Reviews to Analyze:'}\n${promptContext}` }]
             }
           ],
           generationConfig: {
@@ -139,36 +172,40 @@ class SteamLensAIEngine {
 
         return {
           modelUsed: modelPath.replace('models/', ''),
-          verdict: parsed.verdict || 'İncelemeler başarıyla analiz edildi.',
+          verdict: parsed.verdict || (lang === 'tr' ? 'İncelemeler başarıyla analiz edildi.' : 'Reviews successfully analyzed.'),
           optimizationScore: Number(parsed.optimizationScore) || 75,
-          optimizationSummary: parsed.optimizationSummary || 'Optimizasyon durumu stabil.',
-          pros: Array.isArray(parsed.pros) ? parsed.pros : ['Oynanış mekanikleri beğeniliyor.'],
-          cons: Array.isArray(parsed.cons) ? parsed.cons : ['Kullanıcılar bazı teknik pürüzlerden şikayetçi.'],
-          patchImpact: parsed.patchImpact || 'Son güncellemeler deneyimi iyileştirmiş.',
-          valueAnalysis: parsed.valueAnalysis || 'Oynanış süresine göre değerlendirilebilir.'
+          optimizationSummary: parsed.optimizationSummary || (lang === 'tr' ? 'Optimizasyon durumu stabil.' : 'Optimization status is stable.'),
+          pros: Array.isArray(parsed.pros) ? parsed.pros : [lang === 'tr' ? 'Oynanış mekanikleri beğeniliyor.' : 'Gameplay mechanics are praised.'],
+          cons: Array.isArray(parsed.cons) ? parsed.cons : [lang === 'tr' ? 'Kullanıcılar bazı teknik pürüzlerden şikayetçi.' : 'Players noted minor technical issues.'],
+          patchImpact: parsed.patchImpact || (lang === 'tr' ? 'Son güncellemeler deneyimi iyileştirmiş.' : 'Recent patches have improved the experience.'),
+          valueAnalysis: parsed.valueAnalysis || (lang === 'tr' ? 'Oynanış süresine göre değerlendirilebilir.' : 'Fair value relative to playtime.')
         };
       } catch (err) {
         lastError = err;
       }
     }
 
-    throw lastError || new Error('Uygun Gemini modeli bulunamadı.');
+    throw lastError || new Error('No working Gemini model available.');
   }
 
   /**
    * Ultra-Fast Rule-Based Statistical NLP Engine.
    * Runs in ~5ms without GPU load, network requests, or API limits.
+   * Outputs results in Turkish or English according to lang parameter.
    */
-  static runRuleBasedAnalysis(reviews, stats) {
+  static runRuleBasedAnalysis(reviews, stats, lang = 'en') {
+    const i18n = (typeof window !== 'undefined' && window.SteamLensI18n) ? window.SteamLensI18n : null;
+    const t = (k, p) => i18n ? i18n.t(k, lang, p) : k;
+
     const keywords = {
-      optBad: [/fps drop/i, /kasma/i, /stutter/i, /donma/i, /optimizasyon berbat/i, /bad optimization/i, /lag/i, /unplayable/i, /çökme/i, /crash/i, /frame drop/i, /fatal error/i, /siyah ekran/i, /low fps/i, /fps düşüş/i],
-      optGood: [/smooth/i, /akıcı/i, /optimizasyon iyi/i, /good optimization/i, /high fps/i, /60 fps/i, /144 fps/i, /dlss/i, /fsr/i, /runs well/i, /tertemiz/i, /yağ gibi/i, /stabil/i],
-      storyGood: [/hikaye/i, /story/i, /lore/i, /atmosfer/i, /atmosphere/i, /soundtrack/i, /müzik/i, /mükemmel senaryo/i, /emotional/i, /grafik/i, /visuals/i, /art style/i, /sinematik/i],
-      gameplayGood: [/oynanış/i, /gameplay/i, /combat/i, /bağımlılık/i, /fun/i, /zevk/i, /sarıyor/i, /keyifli/i, /akıcı mekanik/i, /mechanics/i, /satisfying/i, /vuruş hissi/i],
-      gameplayBad: [/sıkıcı/i, /boring/i, /repetitive/i, /tekrar/i, /clunky/i, /hantal/i, /boş dünya/i, /bug dolu/i, /glitch/i, /kötü kontrol/i, /yapay zeka kötü/i],
-      priceGood: [/fiyatını hak ediyor/i, /worth/i, /ucuz/i, /bedava/i, /cheap/i, /fiyatı uygun/i, /dolu dolu/i, /doyurucu/i, /kuruşuna kadar/i],
-      priceBad: [/pahalı/i, /expensive/i, /değmez/i, /not worth/i, /para tuzağı/i, /p2w/i, /overpriced/i, /iade ettim/i, /refund/i, /zam/i, /bu fiyata alınmaz/i],
-      patches: [/güncelleme/i, /update/i, /patch/i, /yama/i, /yeni güncelleme/i, /fixed/i, /düzelttiler/i, /bozdular/i]
+      optBad: [/fps drop/i, /kasma/i, /stutter/i, /donma/i, /optimizasyon berbat/i, /bad optimization/i, /poorly optimized/i, /lag/i, /unplayable/i, /çökme/i, /crash/i, /freez/i, /frame drop/i, /fatal error/i, /siyah ekran/i, /black screen/i, /low fps/i, /fps düşüş/i],
+      optGood: [/smooth/i, /akıcı/i, /optimizasyon iyi/i, /good optimization/i, /well optimized/i, /high fps/i, /60 fps/i, /144 fps/i, /dlss/i, /fsr/i, /runs well/i, /tertemiz/i, /yağ gibi/i, /stabil/i, /stable/i, /flawless/i],
+      storyGood: [/hikaye/i, /story/i, /lore/i, /atmosfer/i, /atmosphere/i, /soundtrack/i, /müzik/i, /music/i, /mükemmel senaryo/i, /emotional/i, /grafik/i, /visuals/i, /art style/i, /graphics/i, /cinematic/i, /sinematik/i],
+      gameplayGood: [/oynanış/i, /gameplay/i, /combat/i, /bağımlılık/i, /fun/i, /zevk/i, /sarıyor/i, /keyifli/i, /akıcı mekanik/i, /mechanics/i, /satisfying/i, /vuruş hissi/i, /addictive/i, /responsive/i],
+      gameplayBad: [/sıkıcı/i, /boring/i, /repetitive/i, /tekrar/i, /clunky/i, /hantal/i, /boş dünya/i, /empty world/i, /bug dolu/i, /buggy/i, /glitch/i, /kötü kontrol/i, /bad controls/i, /yapay zeka kötü/i, /bad ai/i],
+      priceGood: [/fiyatını hak ediyor/i, /worth/i, /ucuz/i, /bedava/i, /cheap/i, /fiyatı uygun/i, /dolu dolu/i, /doyurucu/i, /kuruşuna kadar/i, /bargain/i, /great value/i],
+      priceBad: [/pahalı/i, /expensive/i, /değmez/i, /not worth/i, /para tuzağı/i, /cash grab/i, /p2w/i, /overpriced/i, /iade ettim/i, /refund/i, /zam/i, /bu fiyata alınmaz/i, /wait for sale/i],
+      patches: [/güncelleme/i, /update/i, /patch/i, /yama/i, /yeni güncelleme/i, /fixed/i, /düzelttiler/i, /bozdular/i, /broke/i, /hotfix/i]
     };
 
     let optBadCount = 0;
@@ -182,18 +219,18 @@ class SteamLensAIEngine {
     let crashCount = 0;
 
     for (const r of reviews) {
-      const t = r.text;
-      if (keywords.optBad.some(regex => regex.test(t))) {
+      const tStr = r.text;
+      if (keywords.optBad.some(regex => regex.test(tStr))) {
         optBadCount++;
-        if (/crash|çökme|fatal error/i.test(t)) crashCount++;
+        if (/crash|çökme|fatal error|freez/i.test(tStr)) crashCount++;
       }
-      if (keywords.optGood.some(regex => regex.test(t))) optGoodCount++;
-      if (keywords.storyGood.some(regex => regex.test(t))) storyGoodCount++;
-      if (keywords.gameplayGood.some(regex => regex.test(t))) gameplayGoodCount++;
-      if (keywords.gameplayBad.some(regex => regex.test(t))) gameplayBadCount++;
-      if (keywords.priceGood.some(regex => regex.test(t))) priceGoodCount++;
-      if (keywords.priceBad.some(regex => regex.test(t))) priceBadCount++;
-      if (keywords.patches.some(regex => regex.test(t))) patchCount++;
+      if (keywords.optGood.some(regex => regex.test(tStr))) optGoodCount++;
+      if (keywords.storyGood.some(regex => regex.test(tStr))) storyGoodCount++;
+      if (keywords.gameplayGood.some(regex => regex.test(tStr))) gameplayGoodCount++;
+      if (keywords.gameplayBad.some(regex => regex.test(tStr))) gameplayBadCount++;
+      if (keywords.priceGood.some(regex => regex.test(tStr))) priceGoodCount++;
+      if (keywords.priceBad.some(regex => regex.test(tStr))) priceBadCount++;
+      if (keywords.patches.some(regex => regex.test(tStr))) patchCount++;
     }
 
     const total = reviews.length || 1;
@@ -207,69 +244,69 @@ class SteamLensAIEngine {
     // Dynamic Pros
     const pros = [];
     if (gameplayGoodCount >= 2 || stats.positivePercentage > 65) {
-      pros.push(`Akıcı ve tatmin edici oynanış dinamikleri oyuncuların %${stats.positivePercentage}'i tarafından övülüyor.`);
+      pros.push(t('ruleProsGameplay', { pct: stats.positivePercentage }));
     }
     if (storyGoodCount >= 2) {
-      pros.push('Atmosfer, görsel tasarım ve işitsel detaylar oldukça başarılı bulunmuş.');
+      pros.push(t('ruleProsStory'));
     }
     if (optGoodCount >= 2 || optimizationScore > 75) {
-      pros.push('Donanım uyumluluğu ve genel performans stabil bir seviyede.');
+      pros.push(t('ruleProsOpt'));
     }
     if (priceGoodCount >= 1 || stats.avgPlaytimeHours > 20) {
-      pros.push(`Ortalama ${stats.avgPlaytimeHours} saatlik oynanış süresiyle yüksek içerik doyuruculuğu.`);
+      pros.push(t('ruleProsValue', { hours: stats.avgPlaytimeHours }));
     }
     if (pros.length === 0) {
-      pros.push('Konsept ve temel fikir oyuncuların ilgisini çekmeyi başarıyor.');
+      pros.push(t('ruleProsDefault'));
     }
 
     // Dynamic Cons
     const cons = [];
     if (optBadCount >= 2 || optimizationScore < 70) {
-      cons.push(`İncelenen yorumların %${Math.round(optBadRatio * 100)}'inde FPS düşüşü, takılma veya optimizasyon şikayeti var.`);
+      cons.push(t('ruleConsOpt', { pct: Math.round(optBadRatio * 100) }));
     }
     if (crashCount >= 1) {
-      cons.push('Bazı kullanıcılar beklenmeyen oyun çökmeleri ve kilitlenmeler bildirmiş.');
+      cons.push(t('ruleConsCrash'));
     }
     if (priceBadCount >= 2) {
-      cons.push('Fiyat/içerik dengesi konusunda eleştiriler mevcut, indirim beklenmesi öneriliyor.');
+      cons.push(t('ruleConsPrice'));
     }
     if (gameplayBadCount >= 2) {
-      cons.push('İlerleyen saatlerde görev veya mekaniklerin kendini tekrarladığı ifade edilmiş.');
+      cons.push(t('ruleConsRepetitive'));
     }
     if (cons.length === 0) {
-      cons.push('Ciddi bir teknik blokaj yok; incelemelerdeki eleştiriler çoğunlukla kişisel tercihlere dayanıyor.');
+      cons.push(t('ruleConsDefault'));
     }
 
     // Patch impact
-    let patchImpact = 'Topluluk son dönemde büyük bir yama kırılması bildirmemiş.';
+    let patchImpact = t('rulePatchDefault');
     if (patchCount >= 2) {
-      patchImpact = `İncelemelerde son güncellemelere değinilmiş (${patchCount} yorum); geliştirici ekibin oyunu aktif desteklediği görülüyor.`;
+      patchImpact = t('rulePatchActive', { count: patchCount });
     }
 
     // Value analysis
-    let valueAnalysis = `Ortalama oynanış süresi ${stats.avgPlaytimeHours} saat. `;
+    let valueAnalysis = t('ruleValuePrefix', { hours: stats.avgPlaytimeHours });
     if (stats.positivePercentage >= 75) {
-      valueAnalysis += 'Türün meraklıları için tam fiyatını veya küçük indirimleri fazlasıyla hak ediyor.';
+      valueAnalysis += t('ruleValueHigh');
     } else if (stats.positivePercentage >= 50) {
-      valueAnalysis += 'İçerik miktarı fena değil, ancak %30-%50 arası bir Steam indiriminde alınması daha avantajlı.';
+      valueAnalysis += t('ruleValueMid');
     } else {
-      valueAnalysis += 'Teknik eksikler ve fiyatlandırma sebebiyle derin bir indirim veya büyük güncellemeler beklenmeli.';
+      valueAnalysis += t('ruleValueLow');
     }
 
     // General Verdict
     let verdict = '';
     if (stats.positivePercentage >= 80 && optimizationScore >= 75) {
-      verdict = `Topluluğun %${stats.positivePercentage} gibi ezici bir çoğunluğu tarafından tavsiye edilen, performansı stabil ve güçlü bir yapım.`;
+      verdict = t('ruleVerdictHigh', { pct: stats.positivePercentage });
     } else if (stats.positivePercentage >= 60) {
-      verdict = `Genel olarak eğlenceli ve olumlu (%${stats.positivePercentage} onay), ancak bazı küçük optimizasyon pürüzleri ve tekrar eden unsurları var.`;
+      verdict = t('ruleVerdictMid', { pct: stats.positivePercentage });
     } else {
-      verdict = `Karışık/olumsuz incelemelere sahip. Satın almadan önce eksileri ve sistem gereksinimlerini dikkatlice inceleyin.`;
+      verdict = t('ruleVerdictLow');
     }
 
-    let optimizationSummary = `Optimizasyon Sağlık Skoru %${optimizationScore}/100. `;
-    if (optimizationScore >= 80) optimizationSummary += 'Performans oldukça akıcı ve stabil.';
-    else if (optimizationScore >= 60) optimizationSummary += 'Orta seviye donanımlarda yer yer FPS dropları yaşanabilir.';
-    else optimizationSummary += 'Ciddi performans ve optimizasyon sorunları raporlanmış.';
+    let optimizationSummary = t('ruleOptSummaryPrefix', { score: optimizationScore });
+    if (optimizationScore >= 80) optimizationSummary += t('ruleOptSummaryHigh');
+    else if (optimizationScore >= 60) optimizationSummary += t('ruleOptSummaryMid');
+    else optimizationSummary += t('ruleOptSummaryLow');
 
     return {
       verdict,
@@ -282,24 +319,30 @@ class SteamLensAIEngine {
     };
   }
 
-  static generateEmptyResult() {
+  static generateEmptyResult(lang = 'en') {
+    const i18n = (typeof window !== 'undefined' && window.SteamLensI18n) ? window.SteamLensI18n : null;
+    const t = (k, p) => i18n ? i18n.t(k, lang, p) : k;
+
     return {
-      tier: 'Veri Yetersiz',
+      tier: t('tierEmpty'),
       tierCode: 'empty',
       isAI: false,
-      verdict: 'Bu oyun için henüz analiz yapılabilecek yeterlilikte filtrelenmiş inceleme bulunamadı.',
+      verdict: t('ruleEmptyVerdict'),
       optimizationScore: 0,
-      optimizationSummary: 'Yetersiz veri.',
-      pros: ['Henüz yeterli yorum yok.'],
-      cons: ['Henüz yeterli yorum yok.'],
-      patchImpact: 'Yama bilgisi yok.',
-      valueAnalysis: 'Fiyat değerlendirmesi için daha fazla inceleme gerekiyor.',
+      optimizationSummary: t('ruleEmptyOptSummary'),
+      pros: [t('ruleEmptyPros')],
+      cons: [t('ruleEmptyCons')],
+      patchImpact: t('ruleEmptyPatch'),
+      valueAnalysis: t('ruleEmptyValue'),
       stats: { positivePercentage: 0, avgPlaytimeHours: 0, validReviews: [] }
     };
   }
 }
 
-// Attach to window for content script usage
+// Attach to window / global scope for content script & tests
 if (typeof window !== 'undefined') {
   window.SteamLensAIEngine = SteamLensAIEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SteamLensAIEngine;
 }

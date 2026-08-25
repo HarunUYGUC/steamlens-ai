@@ -1,6 +1,7 @@
 /**
  * SteamLens AI — Content Script UI & Page Integration
- * Manages DOM injection, SPA navigation detection, dynamic storage listeners, and interactive UI states.
+ * Manages DOM injection, SPA navigation detection, dynamic storage listeners,
+ * multilingual UI rendering, and interactive report states.
  */
 
 (function () {
@@ -16,11 +17,32 @@
     isAnalyzing: false,
     settings: {
       engineMode: 'rule',
+      uiLanguage: 'auto',
       preferredLanguage: 'all',
       geminiApiKey: '',
       reviewLimit: 60
     }
   };
+
+  /**
+   * Helper to get active language code ('tr' or 'en').
+   */
+  function getLang() {
+    if (window.SteamLensI18n) {
+      return window.SteamLensI18n.resolveLanguage(state.settings.uiLanguage);
+    }
+    return (state.settings.uiLanguage === 'tr') ? 'tr' : 'en';
+  }
+
+  /**
+   * Helper to get translated string for key in current language.
+   */
+  function t(key, params = {}) {
+    if (window.SteamLensI18n) {
+      return window.SteamLensI18n.t(key, getLang(), params);
+    }
+    return key;
+  }
 
   /**
    * Initializes content script, loads settings and starts observers.
@@ -39,6 +61,7 @@
     try {
       const stored = await chrome.storage.local.get([
         'engineMode',
+        'uiLanguage',
         'preferredLanguage',
         'geminiApiKey',
         'reviewLimit'
@@ -58,9 +81,16 @@
     chrome.storage.onChanged.addListener((changes, namespace) => {
       if (namespace === 'local') {
         let changed = false;
+        let langChanged = false;
+
         if (changes.engineMode) {
           state.settings.engineMode = changes.engineMode.newValue;
           changed = true;
+        }
+        if (changes.uiLanguage) {
+          state.settings.uiLanguage = changes.uiLanguage.newValue;
+          changed = true;
+          langChanged = true;
         }
         if (changes.geminiApiKey) {
           state.settings.geminiApiKey = changes.geminiApiKey.newValue;
@@ -74,22 +104,36 @@
         }
 
         if (changed) {
-          updateTriggerButtonBadge();
+          updateTriggerButton();
+          // If a report container exists and language changed, clear cache for current game and re-render if needed
+          if (langChanged && state.currentAppId && state.cache.has(state.currentAppId)) {
+            state.cache.delete(state.currentAppId);
+            const container = document.getElementById('steamlens-container');
+            if (container) {
+              startAnalysis(true);
+            }
+          }
         }
       }
     });
   }
 
   /**
-   * Updates trigger button badge dynamically without page reload.
+   * Updates trigger button label and badge dynamically without page reload.
    */
-  function updateTriggerButtonBadge() {
-    const badgeEl = document.querySelector('.steamlens-trigger-btn .sl-btn-badge');
-    if (badgeEl) {
-      const isGemini = state.settings.engineMode === 'gemini' && Boolean(state.settings.geminiApiKey && state.settings.geminiApiKey.trim().length > 15);
-      badgeEl.textContent = isGemini ? '⚡ Gemini AI' : '🚀 Hızlı NLP';
-      badgeEl.className = `sl-btn-badge ${isGemini ? 'gemini' : 'rule'}`;
-    }
+  function updateTriggerButton() {
+    const btn = document.querySelector('.steamlens-trigger-btn');
+    if (!btn) return;
+
+    const isGemini = state.settings.engineMode === 'gemini' && Boolean(state.settings.geminiApiKey && state.settings.geminiApiKey.trim().length > 15);
+    const badgeText = isGemini ? t('badgeGeminiAI') : t('badgeRuleNLP');
+    const badgeClass = isGemini ? 'gemini' : 'rule';
+
+    btn.innerHTML = `
+      <span class="sl-btn-icon">🤖</span>
+      <span>${escapeHtml(t('triggerButtonText'))}</span>
+      <span class="sl-btn-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
+    `;
   }
 
   /**
@@ -116,7 +160,7 @@
    */
   function injectTriggerButton() {
     if (document.getElementById('steamlens-trigger-wrapper')) {
-      updateTriggerButtonBadge();
+      updateTriggerButton();
       return;
     }
 
@@ -127,7 +171,7 @@
     wrapper.id = 'steamlens-trigger-wrapper';
 
     const isGemini = state.settings.engineMode === 'gemini' && Boolean(state.settings.geminiApiKey && state.settings.geminiApiKey.trim().length > 15);
-    const badgeText = isGemini ? '⚡ Gemini AI' : '🚀 Hızlı NLP';
+    const badgeText = isGemini ? t('badgeGeminiAI') : t('badgeRuleNLP');
     const badgeClass = isGemini ? 'gemini' : 'rule';
 
     const btn = document.createElement('button');
@@ -135,8 +179,8 @@
     btn.type = 'button';
     btn.innerHTML = `
       <span class="sl-btn-icon">🤖</span>
-      <span>SteamLens AI ile İncelemeleri Özetle</span>
-      <span class="sl-btn-badge ${badgeClass}">${badgeText}</span>
+      <span>${escapeHtml(t('triggerButtonText'))}</span>
+      <span class="sl-btn-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
     `;
 
     btn.addEventListener('click', () => {
@@ -216,7 +260,7 @@
     }
 
     state.isAnalyzing = true;
-    renderLoading('Steam incelemeleri çekiliyor ve spam/meme filtrelerinden geçiriliyor...');
+    renderLoading(t('loadingFetchAndFilter'));
 
     try {
       // 1. Fetch raw reviews
@@ -229,14 +273,15 @@
       const processedData = window.SteamApiClient.processReviews(rawData);
 
       if (processedData.validReviews.length === 0) {
-        renderError('Bu oyun için yeterli inceleme bulunamadı veya tüm incelemeler filtreye takıldı.');
+        renderError(t('errorNoReviews'));
         state.isAnalyzing = false;
         return;
       }
 
-      // 3. Run Analysis with selected engine mode
+      // 3. Run Analysis with selected engine mode & UI language
       const analysisResult = await window.SteamLensAIEngine.analyze(processedData, {
         engineMode: state.settings.engineMode || 'rule',
+        uiLanguage: state.settings.uiLanguage || 'auto',
         geminiApiKey: state.settings.geminiApiKey,
         preferredLanguage: state.settings.preferredLanguage,
         onProgress: (prog) => {
@@ -249,7 +294,7 @@
       renderResult(analysisResult);
     } catch (err) {
       console.error('[SteamLens AI] Analysis error:', err);
-      renderError(`Analiz sırasında bir hata oluştu: ${err.message || 'Bilinmeyen hata'}`);
+      renderError(t('errorGeneral', { error: err.message || 'Unknown error' }));
     } finally {
       state.isAnalyzing = false;
     }
@@ -276,7 +321,7 @@
       <div class="sl-header">
         <div class="sl-title-group">
           <div class="sl-logo">🤖</div>
-          <h3 class="sl-heading">SteamLens AI <span style="font-size:12px; font-weight:400; color:#8f98a0;">(Analiz Ediliyor...)</span></h3>
+          <h3 class="sl-heading">${escapeHtml(t('loadingTitle'))}</h3>
         </div>
       </div>
       <div style="margin-bottom:16px; font-size:13px; color:#66c0f4;" id="sl-loading-msg">
@@ -335,19 +380,19 @@
           <div class="sl-logo">🤖</div>
           <div>
             <h3 class="sl-heading">
-              SteamLens AI Analiz Özeti
+              ${escapeHtml(t('reportTitle'))}
               <span class="sl-tier-badge ${tierClass}">${escapeHtml(tier)}</span>
             </h3>
           </div>
         </div>
         <div class="sl-header-actions">
-          <button class="sl-action-btn" id="sl-copy-btn" title="Özeti panoya kopyala">
-            📋 Kopyala
+          <button class="sl-action-btn" id="sl-copy-btn" title="${escapeHtml(t('btnCopy'))}">
+            ${escapeHtml(t('btnCopy'))}
           </button>
-          <button class="sl-action-btn" id="sl-refresh-btn" title="İncelemeleri yeniden çek ve analiz et">
-            🔄 Yenile
+          <button class="sl-action-btn" id="sl-refresh-btn" title="${escapeHtml(t('btnRefresh'))}">
+            ${escapeHtml(t('btnRefresh'))}
           </button>
-          <button class="sl-action-btn" id="sl-close-btn" title="Kapat">
+          <button class="sl-action-btn" id="sl-close-btn" title="${escapeHtml(t('btnClose'))}">
             ✕
           </button>
         </div>
@@ -356,7 +401,7 @@
       <!-- Key Metrics Bar -->
       <div class="sl-metrics-grid">
         <div class="sl-metric-card">
-          <span class="sl-metric-label">Topluluk Onayı</span>
+          <span class="sl-metric-label">${escapeHtml(t('metricCommunityApproval'))}</span>
           <span class="sl-metric-val">
             <span style="color: ${positivePct >= 70 ? '#a4d007' : positivePct >= 50 ? '#ffc83b' : '#ff5252'};">
               %${positivePct}
@@ -366,7 +411,7 @@
         </div>
 
         <div class="sl-metric-card">
-          <span class="sl-metric-label">Optimizasyon Skoru</span>
+          <span class="sl-metric-label">${escapeHtml(t('metricOptimizationScore'))}</span>
           <span class="sl-metric-val">
             <span style="color: ${optScoreClass === 'good' ? '#a4d007' : optScoreClass === 'med' ? '#ffc83b' : '#ff5252'};">
               %${optimizationScore}
@@ -379,14 +424,14 @@
         </div>
 
         <div class="sl-metric-card">
-          <span class="sl-metric-label">Ort. Oynanış Süresi</span>
+          <span class="sl-metric-label">${escapeHtml(t('metricAvgPlaytime'))}</span>
           <span class="sl-metric-val">
-            ⏱️ ${stats?.avgPlaytimeHours || 0} <span style="font-size:12px; font-weight:400; color:#8f98a0;">saat</span>
+            ⏱️ ${stats?.avgPlaytimeHours || 0} <span style="font-size:12px; font-weight:400; color:#8f98a0;">${escapeHtml(t('unitHours'))}</span>
           </span>
         </div>
 
         <div class="sl-metric-card">
-          <span class="sl-metric-label">Filtrelenmiş İnceleme</span>
+          <span class="sl-metric-label">${escapeHtml(t('metricFilteredReviews'))}</span>
           <span class="sl-metric-val">
             🔍 ${finalValid} <span style="font-size:12px; font-weight:400; color:#8f98a0;">/ ${finalTotal}</span>
           </span>
@@ -395,7 +440,7 @@
 
       <!-- Verdict Banner -->
       <div class="sl-verdict-box">
-        <strong>💡 Genel Sonuç:</strong> ${escapeHtml(verdict)}
+        <strong>${escapeHtml(t('verdictTitle'))}</strong> ${escapeHtml(verdict)}
         <div style="margin-top:6px; font-size:12px; color:#a4d007;">
           ⚡ ${escapeHtml(optimizationSummary)}
         </div>
@@ -405,7 +450,7 @@
       <div class="sl-details-grid">
         <!-- Pros -->
         <div class="sl-detail-card">
-          <h4 class="sl-card-title pros">🟢 Güçlü Yönler</h4>
+          <h4 class="sl-card-title pros">${escapeHtml(t('prosTitle'))}</h4>
           <ul class="sl-bullet-list">
             ${(pros || []).map(p => `<li>${escapeHtml(p)}</li>`).join('')}
           </ul>
@@ -413,7 +458,7 @@
 
         <!-- Cons -->
         <div class="sl-detail-card">
-          <h4 class="sl-card-title cons">🔴 Kritik Sorunlar & Şikayetler</h4>
+          <h4 class="sl-card-title cons">${escapeHtml(t('consTitle'))}</h4>
           <ul class="sl-bullet-list">
             ${(cons || []).map(c => `<li>${escapeHtml(c)}</li>`).join('')}
           </ul>
@@ -424,21 +469,21 @@
       <div class="sl-details-grid">
         <!-- Patch Impact -->
         <div class="sl-detail-card">
-          <h4 class="sl-card-title patch">⚡ Son Güncellemeler & Yama Durumu</h4>
-          <p class="sl-card-body">${escapeHtml(patchImpact || 'Veri bulunmuyor.')}</p>
+          <h4 class="sl-card-title patch">${escapeHtml(t('patchTitle'))}</h4>
+          <p class="sl-card-body">${escapeHtml(patchImpact || 'N/A')}</p>
         </div>
 
         <!-- Value Analysis -->
         <div class="sl-detail-card">
-          <h4 class="sl-card-title value">⏱️ Fiyat / Süre / Değer Analizi</h4>
-          <p class="sl-card-body">${escapeHtml(valueAnalysis || 'Veri bulunmuyor.')}</p>
+          <h4 class="sl-card-title value">${escapeHtml(t('valueTitle'))}</h4>
+          <p class="sl-card-body">${escapeHtml(valueAnalysis || 'N/A')}</p>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="sl-footer">
-        <span>SteamLens AI — Steam İnceleme Özeti</span>
-        <span>Spam ve meme yorumlar filtrelenerek saf geri bildirim analiz edilir 🛡️</span>
+        <span>${escapeHtml(t('footerSummary'))}</span>
+        <span>${escapeHtml(t('footerDisclaimer'))}</span>
       </div>
     `;
 
@@ -471,49 +516,49 @@
       .replace(/ on Steam$/i, '')
       .replace(/ Steam'de$/i, '')
       .replace(/^Save \d+% on /i, '')
-      .trim() || 'Steam Oyunu';
+      .trim() || 'Steam Game';
   }
 
   /**
-   * Copies formatted markdown summary to user's clipboard.
+   * Copies formatted markdown summary to user's clipboard in active language.
    */
   async function copySummaryToClipboard(data, btnElement) {
     const gameName = getGameTitle();
     const valid = data.validCount || data.stats?.validReviews?.length || 0;
     const total = data.totalFetched || 60;
 
-    const text = `🤖 SteamLens AI Analiz Özeti
-🎮 Oyun: ${gameName}
-🧠 Analiz Motoru: ${data.tier}
+    const text = `${t('clipboardHeader')}
+${t('clipboardGame')} ${gameName}
+${t('clipboardEngine')} ${data.tier}
 ━━━━━━━━━━━━━━━━━━━━
-📊 Topluluk Onayı: %${data.stats?.positivePercentage || 0}
-⚡ Optimizasyon Skoru: %${data.optimizationScore}/100
-⏱️ Ort. Oynanış: ${data.stats?.avgPlaytimeHours || 0} saat
-🔍 Filtrelenmiş İnceleme: ${valid} / ${total}
+📊 ${t('metricCommunityApproval')}: %${data.stats?.positivePercentage || 0}
+⚡ ${t('metricOptimizationScore')}: %${data.optimizationScore}/100
+⏱️ ${t('metricAvgPlaytime')}: ${data.stats?.avgPlaytimeHours || 0} ${t('unitHours')}
+🔍 ${t('metricFilteredReviews')}: ${valid} / ${total}
 
-💡 Genel Değerlendirme:
+${t('verdictTitle')}
 ${data.verdict}
 ${data.optimizationSummary ? `⚡ ${data.optimizationSummary}` : ''}
 
-🟢 Güçlü Yönler:
+${t('prosTitle')}:
 ${(data.pros || []).map(p => `• ${p}`).join('\n')}
 
-🔴 Kritik Sorunlar & Şikayetler:
+${t('consTitle')}:
 ${(data.cons || []).map(c => `• ${c}`).join('\n')}
 
-⚡ Son Güncellemeler & Yama Durumu:
+${t('patchTitle')}:
 ${data.patchImpact}
 
-⏱️ Fiyat / Süre / Değer Analizi:
+${t('valueTitle')}:
 ${data.valueAnalysis}
 ━━━━━━━━━━━━━━━━━━━━
-SteamLens AI ile üretildi.`;
+${t('clipboardFooter')}`;
 
     try {
       await navigator.clipboard.writeText(text);
       if (btnElement) {
         const orig = btnElement.innerText;
-        btnElement.innerText = '✅ Kopyalandı!';
+        btnElement.innerText = t('btnCopied');
         setTimeout(() => { btnElement.innerText = orig; }, 2000);
       }
     } catch (e) {
@@ -532,7 +577,7 @@ SteamLens AI ile üretildi.`;
       <div class="sl-header">
         <div class="sl-title-group">
           <div class="sl-logo">⚠️</div>
-          <h3 class="sl-heading" style="color: #ff5252;">Analiz Tamamlanamadı</h3>
+          <h3 class="sl-heading" style="color: #ff5252;">${escapeHtml(t('errorTitle'))}</h3>
         </div>
         <button class="sl-action-btn" id="sl-close-err-btn">✕</button>
       </div>
@@ -540,7 +585,7 @@ SteamLens AI ile üretildi.`;
         ${escapeHtml(errorMessage)}
       </div>
       <button class="steamlens-trigger-btn" id="sl-retry-btn" style="padding:8px 16px; font-size:12px;">
-        🔄 Yeniden Dene
+        ${escapeHtml(t('btnRetry'))}
       </button>
     `;
 

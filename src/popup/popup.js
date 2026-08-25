@@ -1,14 +1,17 @@
 /**
  * SteamLens AI — Popup Controller
- * Manages preferences, mode toggle switch, API key validation, and cache.
+ * Manages preferences, language switching, mode toggle switch, API key validation, and cache.
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const i18n = window.SteamLensI18n;
+
   // Elements
   const engineStatusPill = document.getElementById('engine-status-pill');
   const engineStatusDesc = document.getElementById('engine-status-desc');
   const btnModeRule = document.getElementById('btn-mode-rule');
   const btnModeGemini = document.getElementById('btn-mode-gemini');
+  const prefUiLanguage = document.getElementById('pref-ui-language');
   const prefLanguage = document.getElementById('pref-language');
   const prefLimit = document.getElementById('pref-limit');
   const geminiKeyInput = document.getElementById('gemini-key');
@@ -21,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let activeEngineMode = 'rule'; // 'rule' or 'gemini'
   let verifiedModelName = '';
+  let currentLanguage = 'tr'; // resolved language code ('tr' or 'en')
 
   // 0. Dynamic Version Display from manifest.json
   const versionBadge = document.getElementById('popup-version-badge');
@@ -28,10 +32,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     versionBadge.textContent = `v${chrome.runtime.getManifest().version}`;
   }
 
-  // 1. Load stored preferences
+  // 1. Load stored preferences & apply initial language
   await loadPreferences();
 
-  // 2. Mode Toggle Click Handlers
+  // 2. Language switch handler (live update in popup)
+  if (prefUiLanguage) {
+    prefUiLanguage.addEventListener('change', () => {
+      const selected = prefUiLanguage.value;
+      currentLanguage = i18n ? i18n.resolveLanguage(selected) : (selected === 'tr' ? 'tr' : 'en');
+      applyTranslations(currentLanguage);
+      setEngineMode(activeEngineMode);
+    });
+  }
+
+  // 3. Mode Toggle Click Handlers
   btnModeRule.addEventListener('click', () => {
     setEngineMode('rule');
   });
@@ -42,28 +56,56 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function setEngineMode(mode) {
     activeEngineMode = mode;
+    const t = (k, p) => i18n ? i18n.t(k, currentLanguage, p) : k;
+
     if (mode === 'rule') {
       btnModeRule.classList.add('active');
       btnModeGemini.classList.remove('active');
       engineStatusPill.className = 'status-pill ready';
-      engineStatusPill.textContent = '🚀 Hızlı NLP';
-      engineStatusDesc.textContent = 'Ultra hızlı kural tabanlı analiz devrede. Donanımınızı yormaz, 0.01 sn içinde anında özet üretir.';
+      engineStatusPill.textContent = t('badgeRuleNLP');
+      engineStatusDesc.textContent = t('statusDescRule');
     } else {
       btnModeGemini.classList.add('active');
       btnModeRule.classList.remove('active');
       engineStatusPill.className = 'status-pill gemini';
-      engineStatusPill.textContent = '⚡ Gemini AI';
+      engineStatusPill.textContent = t('badgeGeminiAI');
       
       const hasKey = Boolean(geminiKeyInput.value.trim().length > 15);
       if (hasKey) {
-        engineStatusDesc.textContent = `Google Gemini (${verifiedModelName || 'Flash'}) aktif. İncelemeler Google bulutunda akıllıca analiz edilir.`;
+        engineStatusDesc.textContent = t('statusDescGeminiActive', { model: verifiedModelName || 'Flash' });
       } else {
-        engineStatusDesc.textContent = '⚠️ Gemini modu seçildi. Lütfen aşağıya ücretsiz Google AI Studio API anahtarınızı girip kaydedin.';
+        engineStatusDesc.textContent = t('statusDescGeminiNoKey');
       }
     }
   }
 
-  // 3. Toggle password visibility
+  /**
+   * Applies translations to all data-i18n elements in popup.html.
+   */
+  function applyTranslations(lang) {
+    if (!i18n) return;
+
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      const translation = i18n.t(key, lang);
+      if (!translation) return;
+
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = translation;
+      } else if (key === 'geminiKeyHint' || key === 'quickGuideText') {
+        el.innerHTML = translation;
+      } else {
+        el.textContent = translation;
+      }
+    });
+
+    // Update tooltips and attributes
+    if (btnToggleKey) btnToggleKey.title = i18n.t('btnToggleKeyTitle', lang);
+    if (btnTestKey) btnTestKey.title = i18n.t('btnTestKeyTitle', lang);
+    if (btnClearCache) btnClearCache.title = i18n.t('btnClearCacheTitle', lang);
+  }
+
+  // 4. Toggle password visibility
   btnToggleKey.addEventListener('click', () => {
     if (geminiKeyInput.type === 'password') {
       geminiKeyInput.type = 'text';
@@ -74,16 +116,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // 4. Test API Key
+  // 5. Test API Key
   btnTestKey.addEventListener('click', async () => {
     const key = geminiKeyInput.value.trim();
+    const t = (k, p) => i18n ? i18n.t(k, currentLanguage, p) : k;
+
     if (!key) {
-      keyTestHint.textContent = '⚠️ Lütfen önce bir API anahtarı girin.';
+      keyTestHint.textContent = t('keyTestMissing');
       keyTestHint.style.color = '#ff5252';
       return;
     }
 
-    keyTestHint.textContent = '⏳ Google AI Studio ile doğrulanıyor...';
+    keyTestHint.textContent = t('keyTestChecking');
     keyTestHint.style.color = '#66c0f4';
     btnTestKey.disabled = true;
 
@@ -91,25 +135,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       const result = await testGeminiApiKey(key);
       if (result.success) {
         verifiedModelName = result.model;
-        keyTestHint.textContent = `✅ API Anahtarı geçerli ve çalışıyor! (${result.model} Aktif)`;
+        keyTestHint.textContent = t('keyTestSuccess', { model: result.model });
         keyTestHint.style.color = '#a4d007';
         setEngineMode('gemini');
       } else {
-        keyTestHint.textContent = `❌ ${result.message}`;
+        keyTestHint.textContent = t('keyTestFailed', { error: result.message });
         keyTestHint.style.color = '#ff5252';
       }
     } catch (e) {
-      keyTestHint.textContent = `❌ Bağlantı hatası: ${e.message}`;
+      keyTestHint.textContent = t('keyTestConnError', { error: e.message });
       keyTestHint.style.color = '#ff5252';
     } finally {
       btnTestKey.disabled = false;
     }
   });
 
-  // 5. Save settings
+  // 6. Save settings
   btnSave.addEventListener('click', async () => {
+    const t = (k, p) => i18n ? i18n.t(k, currentLanguage, p) : k;
+
     const settings = {
       engineMode: activeEngineMode,
+      uiLanguage: prefUiLanguage.value || 'auto',
       preferredLanguage: prefLanguage.value,
       reviewLimit: parseInt(prefLimit.value, 10) || 60,
       geminiApiKey: geminiKeyInput.value.trim(),
@@ -118,20 +165,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       await chrome.storage.local.set(settings);
-      showToast('✅ Ayarlar başarıyla kaydedildi!');
+      showToast(t('toastSaved'));
     } catch (e) {
-      showToast('❌ Ayarlar kaydedilemedi.');
+      showToast(t('toastSaveError'));
       console.error(e);
     }
   });
 
-  // 6. Clear cache
+  // 7. Clear cache
   btnClearCache.addEventListener('click', async () => {
+    const t = (k, p) => i18n ? i18n.t(k, currentLanguage, p) : k;
     try {
       await chrome.runtime.sendMessage({ type: 'CLEAR_CACHE' });
-      showToast('🗑️ Analiz önbelleği temizlendi!');
+      showToast(t('toastCacheCleared'));
     } catch (e) {
-      showToast('Önbellek temizlendi.');
+      showToast(t('toastCacheCleared'));
     }
   });
 
@@ -150,11 +198,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const data = await chrome.storage.local.get([
         'engineMode',
+        'uiLanguage',
         'preferredLanguage',
         'reviewLimit',
         'geminiApiKey',
         'activeModel'
       ]);
+
+      const storedUiLang = data.uiLanguage || 'auto';
+      if (prefUiLanguage) prefUiLanguage.value = storedUiLang;
+      currentLanguage = i18n ? i18n.resolveLanguage(storedUiLang) : 'en';
+      applyTranslations(currentLanguage);
 
       if (data.preferredLanguage) prefLanguage.value = data.preferredLanguage;
       if (data.reviewLimit) prefLimit.value = String(data.reviewLimit);
@@ -182,7 +236,7 @@ async function testGeminiApiKey(apiKey) {
     if (!listRes.ok) {
       const errData = await listRes.json().catch(() => null);
       const errMsg = errData?.error?.message || `HTTP ${listRes.status}`;
-      return { success: false, message: `Doğrulama başarısız: ${errMsg}` };
+      return { success: false, message: `HTTP ${errMsg}` };
     }
 
     const listData = await listRes.json();
@@ -193,7 +247,7 @@ async function testGeminiApiKey(apiKey) {
     );
 
     if (contentModels.length === 0) {
-      return { success: false, message: 'Bu anahtar için uygun içerik üretim modeli bulunamadı.' };
+      return { success: false, message: 'No suitable generateContent model found.' };
     }
 
     contentModels.sort((a, b) => {
@@ -237,8 +291,8 @@ async function testGeminiApiKey(apiKey) {
       }
     }
 
-    return { success: false, message: `Model testi başarısız: ${lastErrorMsg}` };
+    return { success: false, message: `Model test failed: ${lastErrorMsg}` };
   } catch (err) {
-    return { success: false, message: `Bağlantı hatası: ${err.message}` };
+    return { success: false, message: `Connection error: ${err.message}` };
   }
 }
