@@ -111,7 +111,13 @@ Nasıl Kullanılır?
 
 ---
 
-## 4. Gizlilik Beyanı (Privacy Policy)
+## 4. Gizlilik Politikası (Privacy Policy URL & Disclosures)
 
-- SteamLens AI does not collect, track, or share any user personal data, browsing history, or identities.
-- All analyses are processed directly in the user's browser or via the user's personal Google AI Studio API key.
+- **Public Privacy Policy URL:**  
+  `https://github.com/HarunUYGUC/steamlens-ai/blob/main/PRIVACY_POLICY.md`
+
+### Veri Kullanımı Beyanları (Data Usage Disclosures):
+1. **Veri Toplama (Collection):** No Personally Identifiable Information (PII), browsing history, or user credentials are collected. User settings and optional Gemini API keys are kept 100% local.
+2. **Veri İşleme (Processing):** Steam reviews are processed locally in JavaScript (Fast NLP) or sent to Google Gemini via HTTPS only when BYOK mode is enabled.
+3. **Veri Saklama (Storage):** All data is stored on-device via `chrome.storage.local`. Zero external databases.
+4. **Veri Paylaşma (Sharing):** We never sell, rent, or transfer user data to third parties. Requests are made only to official Steam and Google Gemini endpoints.
