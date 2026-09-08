@@ -54,14 +54,14 @@
       keyTestConnError: '❌ Bağlantı hatası: {error}',
       
       btnSave: '💾 Ayarları Kaydet',
-      btnClearCache: '🗑️ Sıfırla',
-      btnClearCacheTitle: 'Önbelleği temizle',
+      btnDeleteKey: '🗑️ Anahtarı Sil',
+      btnDeleteKeyTitle: 'Kayıtlı Gemini API anahtarını sil',
       
       toastSaved: '✅ Ayarlar başarıyla kaydedildi!',
       toastSaveError: '❌ Ayarlar kaydedilemedi.',
-      toastCacheCleared: '🗑️ Analiz önbelleği temizlendi!',
+      toastKeyDeleted: '🗑️ API anahtarı başarıyla silindi!',
       
-      quickGuideText: '🎮 <strong>Kullanım:</strong> İstediğiniz zaman yukarıdaki butonla <strong>Kural Tabanlı</strong> ve <strong>Gemini AI</strong> arasında geçiş yapabilirsiniz.',
+      rateStoreLink: '⭐ Bizi Chrome Mağazasında Değerlendirin',
 
       // In-page Steam DOM Trigger Button
       triggerButtonText: 'SteamLens AI ile İncelemeleri Özetle',
@@ -194,14 +194,14 @@
       keyTestConnError: '❌ Connection error: {error}',
       
       btnSave: '💾 Save Settings',
-      btnClearCache: '🗑️ Reset',
-      btnClearCacheTitle: 'Clear analysis cache',
+      btnDeleteKey: '🗑️ Clear Key',
+      btnDeleteKeyTitle: 'Delete saved Gemini API key',
       
       toastSaved: '✅ Settings saved successfully!',
       toastSaveError: '❌ Could not save settings.',
-      toastCacheCleared: '🗑️ Analysis cache cleared!',
+      toastKeyDeleted: '🗑️ API key successfully removed!',
       
-      quickGuideText: '🎮 <strong>Usage:</strong> Switch between <strong>Rule-Based</strong> and <strong>Gemini AI</strong> anytime using the toggle above.',
+      rateStoreLink: '⭐ Rate Us on the Chrome Web Store',
 
       // In-page Steam DOM Trigger Button
       triggerButtonText: 'Summarize Reviews with SteamLens AI',

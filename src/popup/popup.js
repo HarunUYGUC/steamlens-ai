@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnTestKey = document.getElementById('btn-test-key');
   const keyTestHint = document.getElementById('key-test-hint');
   const btnSave = document.getElementById('btn-save');
-  const btnClearCache = document.getElementById('btn-clear-cache');
+  const btnDeleteKey = document.getElementById('btn-delete-key');
   const toastEl = document.getElementById('popup-toast');
 
   let activeEngineMode = 'rule'; // 'rule' or 'gemini'
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
         el.placeholder = translation;
-      } else if (key === 'geminiKeyHint' || key === 'quickGuideText') {
+      } else if (key === 'geminiKeyHint') {
         el.innerHTML = translation;
       } else {
         el.textContent = translation;
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Update tooltips and attributes
     if (btnToggleKey) btnToggleKey.title = i18n.t('btnToggleKeyTitle', lang);
     if (btnTestKey) btnTestKey.title = i18n.t('btnTestKeyTitle', lang);
-    if (btnClearCache) btnClearCache.title = i18n.t('btnClearCacheTitle', lang);
+    if (btnDeleteKey) btnDeleteKey.title = i18n.t('btnDeleteKeyTitle', lang);
   }
 
   // 4. Toggle password visibility
@@ -172,16 +172,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // 7. Clear cache
-  btnClearCache.addEventListener('click', async () => {
-    const t = (k, p) => i18n ? i18n.t(k, currentLanguage, p) : k;
-    try {
-      await chrome.runtime.sendMessage({ type: 'CLEAR_CACHE' });
-      showToast(t('toastCacheCleared'));
-    } catch (e) {
-      showToast(t('toastCacheCleared'));
-    }
-  });
+  // 7. Delete API Key
+  if (btnDeleteKey) {
+    btnDeleteKey.addEventListener('click', async () => {
+      const t = (k, p) => i18n ? i18n.t(k, currentLanguage, p) : k;
+      geminiKeyInput.value = '';
+      verifiedModelName = '';
+      if (keyTestHint && i18n) {
+        keyTestHint.innerHTML = i18n.t('geminiKeyHint', currentLanguage);
+        keyTestHint.style.color = '';
+      }
+      try {
+        await chrome.storage.local.remove(['geminiApiKey', 'activeModel']);
+        setEngineMode('rule');
+        showToast(t('toastKeyDeleted'));
+      } catch (e) {
+        showToast(t('toastKeyDeleted'));
+      }
+    });
+  }
 
   function showToast(msg) {
     toastEl.textContent = msg;
@@ -224,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 /**
- * Dynamically queries Google AI Studio and tests available models until finding the active working one.
+ * Dynamically queries Google AI Studio, sorts by newest/fastest model, and tests with early termination (<1s).
  */
 async function testGeminiApiKey(apiKey) {
   const cleanKey = apiKey.trim();
@@ -242,29 +251,41 @@ async function testGeminiApiKey(apiKey) {
     const listData = await listRes.json();
     const models = listData.models || [];
 
-    const contentModels = models.filter(m => 
+    // Filter to valid Gemini models supporting generateContent
+    const geminiModels = models.filter(m => 
+      m.name && m.name.toLowerCase().includes('gemini') &&
       m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent')
     );
 
-    if (contentModels.length === 0) {
-      return { success: false, message: 'No suitable generateContent model found.' };
+    if (geminiModels.length === 0) {
+      return { success: false, message: 'No suitable Gemini generateContent model found.' };
     }
 
-    contentModels.sort((a, b) => {
+    // Priority sort: from newest/fastest flash models to older models
+    geminiModels.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
-      if (aName.includes('3.6-flash')) return -1;
-      if (bName.includes('3.6-flash')) return 1;
-      if (aName.includes('2.0-flash')) return -1;
-      if (bName.includes('2.0-flash')) return 1;
-      if (aName.includes('flash')) return -1;
-      if (bName.includes('flash')) return 1;
-      return 0;
+
+      const score = (name) => {
+        if (name.includes('3.6-flash')) return 120;
+        if (name.includes('3.0-flash')) return 110;
+        if (name.includes('2.5-flash')) return 100;
+        if (name.includes('2.0-flash')) return 90;
+        if (name.includes('1.5-flash-latest')) return 80;
+        if (name.includes('1.5-flash')) return 70;
+        if (name.includes('1.5-pro')) return 60;
+        if (name.includes('flash')) return 50;
+        if (name.includes('gemini-pro')) return 40;
+        return 10;
+      };
+
+      return score(bName) - score(aName);
     });
 
     let lastErrorMsg = '';
 
-    for (const modelObj of contentModels) {
+    // Test top candidate first (fast ping, completes in <1s)
+    for (const modelObj of geminiModels.slice(0, 2)) {
       const modelResourceName = modelObj.name;
       const testGenUrl = `https://generativelanguage.googleapis.com/v1beta/${modelResourceName}:generateContent?key=${encodeURIComponent(cleanKey)}`;
       

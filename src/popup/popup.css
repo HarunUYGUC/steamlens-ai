@@ -296,18 +296,34 @@ label {
 
 /* Footer */
 .popup-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 10px;
 }
 
-.quick-guide {
+.rate-store-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 193, 7, 0.09);
+  border: 1px solid rgba(255, 193, 7, 0.28);
+  border-radius: 6px;
+  color: #ffd166;
   font-size: 11px;
-  color: #8f98a0;
-  line-height: 1.4;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-.quick-guide strong {
-  color: #66c0f4;
+.rate-store-link:hover {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffd166;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Toast */

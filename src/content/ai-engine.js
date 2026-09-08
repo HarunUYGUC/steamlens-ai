@@ -128,10 +128,12 @@ class SteamLensAIEngine {
 
     const candidateModels = [
       'models/gemini-3.6-flash',
-      'models/gemini-2.0-flash',
+      'models/gemini-3.0-flash',
       'models/gemini-2.5-flash',
+      'models/gemini-2.0-flash',
       'models/gemini-1.5-flash',
       'models/gemini-1.5-flash-latest',
+      'models/gemini-1.5-pro',
       'models/gemini-pro'
     ];
 

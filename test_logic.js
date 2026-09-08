@@ -84,9 +84,15 @@ console.assert(i18n.t('prefLimit60', 'en').includes('Balanced'), 'English transl
 console.assert(i18n.t('prefLimit60', 'tr').includes('Dengeli'), 'Turkish translation check');
 
 // Test interpolation
-const testInterpolation = i18n.t('statusDescGeminiActive', 'en', { model: 'Gemini-3.6' });
-console.assert(testInterpolation.includes('Gemini-3.6'), 'Interpolation check failed');
+const testInterpolation = i18n.t('statusDescGeminiActive', 'en', { model: 'gemini-2.5-flash' });
+console.assert(testInterpolation.includes('gemini-2.5-flash'), 'Interpolation check failed');
 console.log('Interpolation result:', testInterpolation);
+
+// Test new i18n keys
+console.assert(typeof i18n.t('btnDeleteKey', 'tr') === 'string', 'btnDeleteKey TR should exist');
+console.assert(typeof i18n.t('btnDeleteKey', 'en') === 'string', 'btnDeleteKey EN should exist');
+console.assert(typeof i18n.t('rateStoreLink', 'tr') === 'string', 'rateStoreLink TR should exist');
+console.assert(typeof i18n.t('rateStoreLink', 'en') === 'string', 'rateStoreLink EN should exist');
 
 console.log('\n--- 3. Testing Rule-Based Analyzer (Turkish - TR) ---');
 const analysisTr = SteamLensAIEngine.runRuleBasedAnalysis(processed.validReviews, processed.stats, 'tr');
