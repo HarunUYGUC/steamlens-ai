@@ -12,7 +12,11 @@
 
 **An intelligent Chrome Extension that filters out meme/spam reviews on Steam and generates an instant, actionable game scorecard using Dual-Engine AI (Google Gemini + High-Speed Local NLP) in English and Turkish.**
 
-[Install from Chrome Web Store](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb) • [Features](#-key-features) • [Screenshots](#-screenshots) • [How It Works](#-how-it-works) • [Architecture](#-architecture--tech-stack) • [Manual Installation](#-installation-guide) • [Privacy Policy](PRIVACY_POLICY.md)
+[🚀 **Install from Chrome Web Store**](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
+
+<br>
+
+[Screenshots](#-screenshots) • [The Problem & Motivation](#-the-problem--motivation) • [Key Features](#-key-features) • [Full Internationalization (i18n)](#-full-internationalization-i18n) • [Problems Solved](#-problems-solved) • [Real-World Use Cases](#-real-world-use-cases) • [Architecture & Tech Stack](#-architecture--tech-stack) • [Project Structure](#-project-structure) • [Installation Guide](#-installation-guide) • [Privacy & Security](#-privacy--security) • [License](#-license)
 
 </div>
 
