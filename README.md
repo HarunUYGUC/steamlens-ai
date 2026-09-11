@@ -106,7 +106,8 @@ Wondering if a \$30 or \$70 title is worth full price? SteamLens AI calculates a
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+<a id="-architecture--tech-stack"></a>
+## 🛠 Architecture & Tech Stack
 
 <div align="center">
   <img src="assets/architecture.png" alt="SteamLens AI Architecture and Data Flow" width="100%">
