@@ -1,194 +1,200 @@
-# 🤖 SteamLens AI — Steam Review Summarizer / Steam İnceleme Özeti
+# 🤖 SteamLens AI — Steam Review Summarizer
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)
-![Manifest](https://img.shields.io/badge/Manifest-V3-success.svg)
-![i18n](https://img.shields.io/badge/i18n-English%20%7C%20Turkish-orange.svg)
-![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%20%7C%20Rule--NLP-66c0f4.svg)
-![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-a4d007.svg)
-![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.4.0-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
+[![Version](https://img.shields.io/badge/version-1.4.0-informational.svg)](manifest.json)
+[![Manifest](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
+[![i18n](https://img.shields.io/badge/i18n-English%20%7C%20Turkish-orange.svg)](src/shared/i18n.js)
+[![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%20%7C%20Fast--NLP-66c0f4.svg)](src/content/ai-engine.js)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-a4d007.svg)](PRIVACY_POLICY.md)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
 
-**Steam mağazasındaki kullanıcı incelemelerini akıllı algoritmalar ve Google Gemini AI ile filtreleyip saniyeler içinde net bir oyun karnesine dönüştüren çok dilli (İngilizce & Türkçe) yeni nesil Chrome eklentisi.**
+**An intelligent Chrome Extension that filters out meme/spam reviews on Steam and generates an instant, actionable game scorecard using Dual-Engine AI (Google Gemini + High-Speed Local NLP) in English and Turkish.**
 
-*An intelligent Chrome Extension that filters spam/meme noise and summarizes Steam game reviews in seconds with Dual-Engine AI (Google Gemini + High-Speed NLP) in English & Turkish.*
-
-[📸 Ekran Görüntüleri](#-ekran-görüntüleri) • [🎯 Projenin Amacı](#-projenin-amacı) • [🌐 Çoklu Dil Desteği](#-çoklu-dil-ve-uluslararasılaşma-i18n) • [🚀 Öne Çıkan Özellikler](#-öne-çıkan-özellikler) • [🧩 Çözülen Problemler](#-çözülen-problemler) • [🎮 Kullanım Senaryoları](#-gerçek-kullanım-senaryoları) • [🛠️ Teknoloji & Mimari](#-teknoloji-ve-mimari) • [📂 Proje Yapısı](#-proje-dosya-yapısı) • [📦 Kurulum Rehberi](#-kurulum-rehberi) • [🔒 Gizlilik & Güvenlik](#-gizlilik-ve-güvenlik)
+[Install from Chrome Web Store](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb) • [Features](#-key-features) • [Screenshots](#-screenshots) • [How It Works](#-how-it-works) • [Architecture](#-architecture--tech-stack) • [Manual Installation](#-installation-guide) • [Privacy Policy](PRIVACY_POLICY.md)
 
 </div>
 
 ---
 
-## 📸 Ekran Görüntüleri
+## 📸 Screenshots
 
 <div align="center">
-  <img src="screenshots/screenshot-2-turkce-gemini-ai.png" alt="SteamLens AI Gemini Modu" width="85%">
-  <p><em>Google Gemini Flash AI ile derinlemesine inceleme analizi ve oyun karnesi.</em></p>
+  <img src="screenshots/screenshot-2-ingilizce-gemini-ai.png" alt="SteamLens AI Gemini Mode Scorecard" width="85%">
+  <p><em>In-depth game review synthesis, optimization score, pros & cons generated on-demand.</em></p>
   
   <br>
 
-  <img src="screenshots/screenshot-4-turkce-popup-settings.png" alt="SteamLens AI Ayarlar ve Motor Seçimi" width="55%">
-  <p><em>Kullanıcı dostu kontrol paneli, dil seçimi ve canlı analiz motoru geçiş anahtarı.</em></p>
+  <img src="screenshots/screenshot-4-ingilizce-popup-settings.png" alt="SteamLens AI Settings & Mode Toggle" width="55%">
+  <p><em>Intuitive popup panel: real-time engine toggle, language preferences, and BYOK Gemini configuration.</em></p>
 </div>
 
 ---
 
-## 🎯 Projenin Amacı
+## 🎯 The Problem & Motivation
 
-Steam'de bir oyun satın almayı düşündüğünüzde karşınıza binlerce kullanıcı incelemesi çıkar. Ancak bu incelemelerin önemli bir kısmı:
-- Tek kelimelik meme ve şakalar (*"10/10"*, *"Amogus"*, *"Hanımım beni terk etti"*),
-- ASCII kedi ve tablo çizimleri,
-- Steam puanı toplamak için atılmış kopyala-yapıştır metinlerden ibarettir.
+Whenever you browse Steam to decide on a purchase, you're faced with thousands of user reviews. However, a significant portion of them consist of:
+- One-word jokes and copypastas (*"10/10"*, *"My dog played it"*, *"My wife left me"*),
+- ASCII art cats, thumbs, and text walls,
+- Low-effort reviews posted solely to farm Steam Community points and awards.
 
-**SteamLens AI'ın temel amacı:** Yüzlerce yorumun arasındaki gürültüyü (noise) gelişmiş filtrelerle temizlemek ve geriye kalan saf kullanıcı deneyimini (signal) oyuncuya **"Bu oyun alınır mı, performansı nasıl, güçlü ve zayıf yönleri neler?"** sorularının cevabı olarak sunmaktır.
-
----
-
-## 🌐 Çoklu Dil ve Uluslararasılaşma (i18n)
-
-SteamLens AI, global Steam topluluğuna hitap etmek üzere tam **İki Dilli (İngilizce 🇬🇧 & Türkçe 🇹🇷)** altyapıya sahiptir:
-* **Otomatik Dil Algılama:** Tarayıcı arayüz diline göre eklenti varsayılan olarak doğru dille başlar.
-* **Canlı Dil Değiştirme:** Popup ayarlarından tek tıkla **🌐 Otomatik**, **🇹🇷 Türkçe** veya **🇬🇧 English** seçilebilir.
-* **Bilingual Analiz Motoru:** Hem Google Gemini AI hem de Hızlı Kural Tabanlı NLP motoru seçilen dilde dinamik rapor üretir.
-* **Chrome Web Store Uyumlu:** `_locales/` klasörüyle mağazada global kullanıcılara otomatik İngilizce, Türkiye'deki kullanıcılara Türkçe görünür.
+**The Mission of SteamLens AI:** Automatically strip away the noise and extract the genuine community signal. In seconds, it answers the vital questions gamers care about: **"Is this game worth buying? How is the performance and stuttering? What are the biggest pros and critical complaints?"**
 
 ---
 
-## 🚀 Öne Çıkan Özellikler
+## 🚀 Key Features
 
-### 1. ⚡ Çift Motor Teknolojisi (Dual-Engine)
-Kullanıcılar tek bir tıklamayla iki farklı analiz motoru arasında anında geçiş yapabilir:
-- **🚀 Kural Tabanlı NLP & İstatistik (Varsayılan):** Sıfır gecikme (5 ms), sıfır GPU/ağ yükü ve tamamen çevrimdışı matematiksel duygu analizi. Donanımınızı asla yormaz, fan açtırmaz.
-- **⚡ Google Gemini AI (Bulut):** Google AI Studio API anahtarı ile çalışan, incelemelerdeki ironileri, karmaşık şikayetleri ve oynanış nüanslarını bir oyun eleştirmeni gibi sentezleyen derin dil modeli.
+### 1. ⚡ Dual-Engine Architecture
+Seamlessly switch between two distinct analysis engines with a single click:
+- **🚀 Fast Rule-Based NLP & Statistics (Default):** Runs 100% locally in your browser in **0.01 seconds**. Zero latency, zero GPU overhead, and no API key required. Never spins up your laptop fans or stresses your hardware.
+- **⚡ Cloud Google Gemini AI (Optional):** Powered by your personal Google AI Studio API key (BYOK). Synthesizes review sentiment, catches sarcasm, and provides nuanced game critic analysis using Google's fastest `Flash` models (`gemini-3.6-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`).
 
-### 2. 🛡️ Akıllı Spam & Meme Filtreleme
-Steam'den çekilen incelemeleri 3 katmanlı filtreleme algoritmasından geçirir:
-- ASCII art, Braille sanatı ve kutucuk kopyalamalarını ayıklar.
-- BBCode/HTML etiketlerini ve gürültülü kısa metinleri temizler.
-- Kullanıcıya kaç incelemenin çekildiğini ve kaçının filtrelenerek analize girdiğini şeffafça gösterir (Örn: `🔍 32 / 80`).
+### 2. 🛡️ Multi-Tier Spam & Meme Filter
+Every batch of reviews fetched from Steam passes through a 3-stage cleaning pipeline:
+- Filters out ASCII art, Braille patterns, and character-box copypastas.
+- Strips BBCode, HTML formatting, and uninformative meme phrases.
+- Transparently displays how many reviews were scanned and how many constructive reviews entered analysis (e.g., `🔍 45 / 60`).
 
-### 3. 📊 Kapsamlı Oyun Karnesi
-- **💡 Genel Değerlendirme & Satın Alma Tavsiyesi:** Oyunun genel kalitesi hakkında net özet.
-- **⚡ Optimizasyon Sağlık Skoru (%0 - %100):** FPS düşüşleri, takılmalar (stutter), çökmeler ve donanım uyumluluğu skoru.
-- **🟢 Güçlü Yönler (Artılar):** Topluluğun en çok övdüğü mekanikler ve özellikler.
-- **🔴 Kritik Sorunlar & Şikayetler (Eksiler):** Oyuncuların en çok yakındığı hatalar veya eksiklikler.
-- **⚡ Son Güncellemeler & Yama Durumu:** Son güncellemelerin oyunu toparlayıp toparlamadığı.
-- **⏱️ Fiyat / Süre / Değer Analizi:** Ortalama oynanış süresine göre indirim tavsiyesi.
-- **📋 Tek Tıkla Panoya Kopyalama:** Üretilen raporu arkadaşlarla veya forumlarda paylaşmak için şık biçimlendirilmiş metin çıktısı.
+### 3. 📊 Comprehensive Game Scorecard
+- **💡 Verdict & Purchasing Recommendation:** Concise 2-sentence bottom-line assessment.
+- **⚡ Optimization / FPS Health Score (0–100%):** Assesses frame drops, stuttering, crashing reports, and hardware stability.
+- **🟢 Key Strengths (Pros):** Gameplay mechanics, visuals, and audio most praised by the community.
+- **🔴 Critical Issues & Complaints (Cons):** Bug reports, balancing flaws, or performance issues flagged by players.
+- **⚡ Recent Updates & Patch Status:** Real-time feedback on whether recent developer patches solved launch-day problems.
+- **⏱️ Price / Time / Value Analysis:** Evaluates price-to-content value based on average player playtime hours.
+- **📋 One-Click Copy to Clipboard:** Formats the entire scorecard as clean markdown/text to share with friends on Discord or forums.
 
 ---
 
-## 🧩 Çözülen Problemler
+## 🌐 Full Internationalization (i18n)
 
-| Geleneksel Yöntem | SteamLens AI Çözümü |
+SteamLens AI is built from the ground up for the global Steam community:
+* **Auto Language Detection:** Automatically adapts to your browser language (`en` or `tr`).
+* **Live In-Place Switching:** Toggle between **🌐 Auto**, **🇬🇧 English**, or **🇹🇷 Turkish** inside the popup without reloading your tabs.
+* **Bilingual Analysis Engine:** Both the Local NLP engine and Gemini AI generate comprehensive scorecards in your selected language.
+* **Full Web Store Localization:** Ships with native `_locales/` strings for Chrome Web Store indexing worldwide.
+
+---
+
+## 🧩 Problems Solved
+
+| Traditional Steam Browsing | With SteamLens AI |
 | :--- | :--- |
-| **Yüzlerce yorumu tek tek okumak zorunda kalmak** | Tek tıkla 5 saniye içinde tüm topluluğun ortak fikrini özetleyen karne üretir. |
-| **Meme, şaka ve copypasta yorumların arasında boğulmak** | Spam filtreleme motoru gürültüyü çöpe atar, sadece yapıcı eleştirileri analiz eder. |
-| **Oyunun mevcut teknik durumunu bilememek** | Kelime frekans analiziyle son yamaların optimizasyon üzerindeki etkisini raporlar. |
-| **Ağır yerel modellerin ekran kartını ve fanları çalıştırması** | Yüksek hızlı kural tabanlı NLP ve hafif Google Bulut API kullanılarak GPU kullanımı sıfırlanmıştır. |
-| **Sayfa yenileme gereksinimi** | Canlı depolama dinleyicisi (`chrome.storage.onChanged`) ile ayarlardaki mod ve dil değişimi açık sekmelere anında yansır. |
+| Reading through dozens of unhelpful reviews | Generates an objective, structured scorecard in seconds with a single click. |
+| Drowning in ASCII memes and point-farming copypastas | 3-stage spam filter strips out jokes and focuses solely on constructive critique. |
+| Unsure if recent patches resolved launch performance | Word-frequency and sentiment analyzer tracks recent update sentiment. |
+| Heavy local LLMs stressing your GPU and fans | 0.01s client-side rule NLP or lightweight Google Cloud API with 0% local GPU load. |
+| Inflexible settings requiring constant page refreshes | Reactive `chrome.storage.onChanged` listener synchronizes settings across tabs in real-time. |
 
 ---
 
-## 🎮 Gerçek Kullanım Senaryoları
+## 🎮 Real-World Use Cases
 
-### Senaryo 1: Büyük Steam İndirim Dönemleri
-Steam yaz/kış indirimlerinde istek listenizdeki 20 oyunu hızlıca elemek istiyorsunuz. Her oyunun sayfasına girip **"SteamLens AI ile İncelemeleri Özetle"** butonuna basarak 1 dakika içinde hangi oyunların teknik olarak hazır, hangilerinin hayal kırıklığı olduğunu görürsünüz.
+### Scenario 1: Steam Seasonal Sales (Summer / Winter Sale)
+You have 25 games on your wishlist during a major sale. Instead of spending 15 minutes per game scrolling through reviews, click **"Summarize Reviews with SteamLens AI"** on each page to evaluate performance and gameplay loops in under 1 minute.
 
-### Senaryo 2: "Son Yama Oyunu Düzeltti mi?" Kontrolü
-Çıkışında optimizasyon sorunları olan bir oyun (örneğin Cyberpunk 2077 veya Star Wars Jedi: Survivor) güncelleme aldı. Eklenti, **"Son Güncellemeler & Yama Durumu"** bölümünde topluluğun son yamalardan memnun olup olmadığını anında bildirir.
+### Scenario 2: "Did the Latest Patch Fix the Game?"
+A game launched with stuttering or optimization bugs (e.g., *Cyberpunk 2077* or *Star Wars Jedi: Survivor*). The **Recent Updates & Patch Status** card instantly reveals whether community consensus agrees that the latest hotfix resolved the issues.
 
-### Senaryo 3: Fiyat / İçerik Dengesi Analizi
-Bir oyunun 30$ veya 60$'a değip değmeyeceğini merak ediyorsunuz. Eklenti, oyuncuların ortalama oynanış saatini (`⏱️ Ort. Oynanış`) ve içerik doyuruculuğunu hesaplayarak *"İndirim beklenmeli"* veya *"Tam fiyatını hak ediyor"* önerisinde bulunur.
+### Scenario 3: Price-to-Playtime Value Check
+Wondering if a \$30 or \$70 title is worth full price? SteamLens AI calculates average player playtime (`⏱️ Avg. Playtime`) and provides tailored advice: *"Wait for a sale"* vs. *"Justifies full price"*.
 
 ---
 
-## 🛠️ Teknoloji ve Mimari
+## 🛠️ Architecture & Tech Stack
 
 <div align="center">
-  <img src="assets/architecture.png" alt="SteamLens AI Mimari ve Veri Akış Şeması" width="100%">
+  <img src="assets/architecture.png" alt="SteamLens AI Architecture and Data Flow" width="100%">
 </div>
 
 <br>
 
-- **Manifest V3:** Modern Chrome eklenti standartlarına %100 uyumlu mimari.
-- **Standart Chrome i18n (`_locales`):** Global Web Store ve tarayıcı yerelleştirmesi.
-- **Modern Vanilla JavaScript (ES6+):** Harici kütüphane bağımlılığı olmadan maksimum hız ve sıfır bundle boyutu.
-- **Steam Web Reviews API:** Steam mağaza incelemelerini doğrudan `https://store.steampowered.com/appreviews/<appid>` üzerinden çeker.
-- **Google Generative Language API:** BYOK (Bring Your Own Key — Kendi Anahtarını Getir) modeliyle kullanıcının kendi anahtarı üzerinden `gemini-3.6-flash` ile doğrudan haberleşir.
-- **Chrome Storage Local API:** Ayarlar, dil tercihleri ve API anahtarları tamamen kullanıcının yerel tarayıcısında saklanır.
-- **Debounced MutationObserver:** Steam'in dinamik sayfa geçişlerini (SPA) tarayıcıyı yormadan (350 ms geciktirmeli) akıllıca takip eder.
+- **Manifest V3:** Fully compliant with modern Chrome Extension standards and declarative lifecycles.
+- **Standard Chrome i18n (`_locales`):** Production-grade internationalization for Web Store metadata.
+- **Pure Vanilla JavaScript (ES6+):** Zero external framework dependencies for maximum execution speed and a tiny bundle size (<40 KB).
+- **Steam Web Reviews API:** Pulls public reviews directly from Valve's official endpoint: `https://store.steampowered.com/appreviews/<appid>`.
+- **Google Generative Language API:** Direct HTTPS communication using your personal key (BYOK) with automated fallback (`gemini-3.6-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`).
+- **Chrome Storage Local API:** User preferences, selected engine modes, and optional API keys are stored strictly on your local device.
+- **Debounced MutationObserver:** Accurately detects Steam Store SPA (Single Page Application) navigation changes with a 350ms debounce to prevent layout thrashing.
 
 ---
 
-## 📂 Proje Dosya Yapısı
-
-<div align="center">
-  <img src="assets/project-structure.png" alt="SteamLens AI Proje Dosya ve Modül Ağacı" width="100%">
-</div>
-
-<br>
+## 📂 Project Structure
 
 ```text
 steamlens-ai/
-├── manifest.json              # Manifest V3 konfigürasyonu (i18n & Storage & Steam/Gemini İzinleri)
-├── _locales/                  # Standart Chrome yerelleştirme dizini
-│   ├── en/messages.json       # İngilizce mağaza ve eklenti meta verileri
-│   └── tr/messages.json       # Türkçe mağaza ve eklenti meta verileri
-├── icons/                     # 16x16, 48x48, 128x128 boyutunda telifsiz saf PNG ikonlar
-├── screenshots/               # Mağaza ve GitHub için 1280x800 HD ekran görüntüleri
-├── assets/                    # Mimari şemaları ve görsel varlıklar (HTML & PNG)
-├── test_logic.js              # Duygu analizi, spam temizleme ve i18n birim testleri (Unit Tests)
+├── manifest.json              # Chrome Manifest V3 configuration (i18n, storage, permissions)
+├── _locales/                  # Standard Chrome localization directory
+│   ├── en/messages.json       # English store and extension metadata
+│   └── tr/messages.json       # Turkish store and extension metadata
+├── icons/                     # 16x16, 48x48, 128x128 high-res PNG extension icons
+├── screenshots/               # High-resolution 1280x800 store & README screenshots
+├── assets/                    # System architecture guides and visual diagrams
+├── test_logic.js              # Automated unit tests (NLP sentiment, meme filter, i18n)
 ├── src/
 │   ├── shared/
-│   │   └── i18n.js            # Merkezi i18n çeviri sözlüğü ve otomatik dil çözümleyici
+│   │   └── i18n.js            # Central dictionary and dynamic language resolver
 │   ├── background/
-│   │   └── service-worker.js  # Yaşam döngüsü, storage yönetimi ve mesaj köprüsü
+│   │   └── service-worker.js  # Extension lifecycle, storage defaults, and message bridge
 │   ├── content/
-│   │   ├── steam-api.js       # Steam Public API istemcisi, 3 katmanlı BBCode ve spam filtresi
-│   │   ├── ai-engine.js       # Çift Motorlu Analiz Motoru (Gemini Flash + Kural Tabanlı NLP - Çok Dilli)
-│   │   ├── content.js         # Steam DOM enjeksiyonu, SPA observer, çok dilli arayüz ve kopyalama
-│   │   └── content.css        # Steam natif dark temalı modern arayüz, skeleton ve animasyonlar
+│   │   ├── steam-api.js       # Steam API client, 3-stage BBCode and spam filtering
+│   │   ├── ai-engine.js       # Dual-Engine core (Gemini Flash + Fast Rule NLP)
+│   │   ├── content.js         # Steam DOM injection, SPA observer, scorecard rendering
+│   │   └── content.css        # Steam-native dark theme styles, skeletons, and badges
 │   └── popup/
-│       ├── popup.html         # Canlı motor & dil seçimi (TR/EN), tercihler ve BYOK paneli
-│       ├── popup.css          # Steam karanlık temalı açılır kontrol paneli
-│       └── popup.js           # Dinamik i18n çevirici, model testi ve anlık ayar senkronizasyonu
-├── README.md                  # Kapsamlı geliştirici & kullanıcı dokümantasyonu
-├── LICENSE                    # Resmi MIT Lisansı (Copyright 2026 Harun)
-└── CHROMEWEBSTORE.md          # Chrome Web Store TR & EN mağaza metinleri ve izin gerekçeleri
+│       ├── popup.html         # Settings control panel, engine toggle, and BYOK form
+│       ├── popup.css          # Steam-themed popup interface styling
+│       └── popup.js           # Live preferences sync, fast API key testing, and mode control
+├── PRIVACY_POLICY.md          # Formal Chrome Web Store compliant privacy policy
+├── LICENSE                    # MIT License (Copyright 2026 Harun)
+└── README.md                  # Comprehensive project documentation
 ```
 
 ---
 
-## 📦 Kurulum Rehberi
+## 📦 Installation Guide
 
-### Geliştirici Modunda Yükleme (Manuel Kurulum):
+### Option 1: Install from Chrome Web Store (Recommended)
+Install the extension with a single click from the official store:  
+👉 **[SteamLens AI on the Chrome Web Store](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)**
 
-1. Bu projeyi bilgisayarınıza klonlayın veya indirin:
+### Option 2: Manual Installation (Developer Mode)
+
+1. Clone or download this repository:
    ```bash
    git clone https://github.com/HarunUYGUC/steamlens-ai.git
    ```
-2. Google Chrome'u açın ve adres çubuğuna `chrome://extensions` yazın.
-3. Sağ üst köşedeki **"Geliştirici modu" (Developer mode)** anahtarını aktif hale getirin.
-4. Sol üstteki **"Paketlenmemiş öge yükle" (Load unpacked)** butonuna tıklayın.
-5. Projenin bulunduğu `steamlens-ai` klasörünü seçin.
-6. Eklenti anında kurulacak ve simgesi Chrome araç çubuğuna eklenecektir!
-
-### İsteğe Bağlı: Google Gemini AI Modunu Açma:
-1. [Google AI Studio](https://aistudio.google.com/app/apikey) sayfasına gidin ve ücretsiz bir API anahtarı alın.
-2. Eklenti simgesine (Popup) tıklayın.
-3. Anahtarı yapıştırıp **"Test"** ve ardından **"💾 Ayarları Kaydet"** butonuna basın.
-4. Artık dilediğiniz zaman üstteki butonla **Kural Tabanlı** veya **Gemini AI** arasında geçiş yapabilirsiniz.
+2. Open Google Chrome and navigate to `chrome://extensions/`.
+3. Enable **Developer mode** using the toggle in the top-right corner.
+4. Click **Load unpacked** in the top-left corner.
+5. Select the `steamlens-ai` directory.
+6. The extension is now installed and active! Visit any Steam game store page to test it.
 
 ---
 
-## 🔒 Gizlilik ve Güvenlik
+### Optional: Enabling Google Gemini AI Mode (BYOK)
 
-- **Sıfır İzleme / Sıfır Telemetri:** Eklenti hiçbir kullanıcı verisini, ziyaret edilen sayfaları veya arama geçmişini toplamaz veya harici sunuculara göndermez.
-- **Yerel BYOK Modeli (Bring Your Own Key — Kendi Anahtarını Getir):** Google Gemini API anahtarınız kaynak kodlarda yer almaz; yalnızca kendi bilgisayarınızdaki izole `chrome.storage.local` alanında tutulur.
+1. Obtain a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Click the SteamLens AI icon in your browser toolbar to open the settings popup.
+3. Paste your API key into the input field and click **Test**.
+4. The system validates the key in under 1 second and saves your settings.
+5. You can now freely toggle between **Rule-Based (Fast NLP)** and **Gemini AI (Cloud)** anytime!
 
 ---
 
-## 📄 Lisans
+## 🔒 Privacy & Security
 
-Bu proje [MIT Lisansı](LICENSE) altında açık kaynak olarak sunulmaktadır.
+SteamLens AI adheres strictly to a privacy-first, client-side model:
+- **Zero Telemetry / No Tracking:** We do not collect, track, or sell your browsing history, Steam account details, or personal information.
+- **Client-Side Storage:** Your settings and optional Gemini API key are stored strictly in your browser's private `chrome.storage.local`.
+- **Encrypted Transmission:** When Gemini mode is active, reviews are transmitted directly from your browser to Google AI Studio via encrypted HTTPS.
+- Read our full [Privacy Policy](PRIVACY_POLICY.md) for complete details.
+
+---
+
+## 📄 License
+
+This project is open-source and licensed under the [MIT License](LICENSE).
+
+Steam and the Steam logo are registered trademarks of Valve Corporation. This project is not affiliated with Valve Corporation.
