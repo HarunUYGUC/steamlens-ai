@@ -20,6 +20,7 @@
       uiLanguage: 'auto',
       preferredLanguage: 'all',
       geminiApiKey: '',
+      activeModel: '',
       reviewLimit: 60
     }
   };
@@ -64,6 +65,7 @@
         'uiLanguage',
         'preferredLanguage',
         'geminiApiKey',
+        'activeModel',
         'reviewLimit'
       ]);
       if (stored) {
@@ -101,6 +103,9 @@
         }
         if (changes.reviewLimit) {
           state.settings.reviewLimit = changes.reviewLimit.newValue;
+        }
+        if (changes.activeModel) {
+          state.settings.activeModel = changes.activeModel.newValue;
         }
 
         if (changed) {
@@ -283,6 +288,7 @@
         engineMode: state.settings.engineMode || 'rule',
         uiLanguage: state.settings.uiLanguage || 'auto',
         geminiApiKey: state.settings.geminiApiKey,
+        activeModel: state.settings.activeModel || '',
         preferredLanguage: state.settings.preferredLanguage,
         onProgress: (prog) => {
           updateLoadingMessage(prog.message);

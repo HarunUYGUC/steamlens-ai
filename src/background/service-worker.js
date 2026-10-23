@@ -50,6 +50,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       } else if (message.type === 'CLEAR_CACHE') {
         await chrome.storage.local.remove('analysisHistory');
         sendResponse({ success: true });
+      } else if (message.type === 'FETCH_STEAM_REVIEWS') {
+        const { appId, options = {} } = message;
+        const queryParams = new URLSearchParams({
+          appid: String(appId),
+          filter: options.filter || 'recent',
+          language: options.language || 'all',
+          num_per_page: Math.min(100, Math.max(20, options.numPerPage || 60)).toString(),
+          purchase_type: options.purchaseType || 'all',
+          review_type: 'all',
+          cursor: '*'
+        });
+
+        const endpoint = `https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/?${queryParams.toString()}`;
+        const response = await fetch(endpoint, {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Steam API responded with HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const payload = data.response || data;
+        sendResponse({ success: true, data: payload });
       } else {
         sendResponse({ success: false, error: 'Unknown message type' });
       }

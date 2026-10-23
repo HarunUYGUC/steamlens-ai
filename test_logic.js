@@ -75,6 +75,13 @@ console.assert(processed.validReviews.length === 3, `Expected 3 valid reviews, g
 console.assert(processed.stats.positiveCount === 2, 'Expected 2 positive reviews');
 console.assert(processed.stats.negativeCount === 1, 'Expected 1 negative review');
 
+// Test Steam WebAPI response wrapper: { response: { reviews: [...], query_summary: {...} } }
+const webApiMock = { response: mockReviews };
+const processedWebApi = SteamApiClient.processReviews(webApiMock);
+console.assert(processedWebApi.validReviews.length === 3, 'WebApi wrapped format should parse correctly');
+console.assert(processedWebApi.stats.positiveCount === 2, 'WebApi positiveCount should match');
+console.log('Steam WebAPI format wrapping test passed.');
+
 console.log('\n--- 2. Testing SteamLensI18n Module ---');
 const i18n = window.SteamLensI18n;
 console.assert(i18n.resolveLanguage('tr') === 'tr', 'resolveLanguage(tr) should return tr');

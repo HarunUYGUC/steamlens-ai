@@ -6,16 +6,27 @@
  */
 
 class SteamLensAIEngine {
+  static KEYWORDS = {
+    optBad: [/fps drop/i, /kasma/i, /stutter/i, /donma/i, /optimizasyon berbat/i, /bad optimization/i, /poorly optimized/i, /lag/i, /unplayable/i, /çökme/i, /crash/i, /freez/i, /frame drop/i, /fatal error/i, /siyah ekran/i, /black screen/i, /low fps/i, /fps düşüş/i],
+    optGood: [/smooth/i, /akıcı/i, /optimizasyon iyi/i, /good optimization/i, /well optimized/i, /high fps/i, /60 fps/i, /144 fps/i, /dlss/i, /fsr/i, /runs well/i, /tertemiz/i, /yağ gibi/i, /stabil/i, /stable/i, /flawless/i],
+    storyGood: [/hikaye/i, /story/i, /lore/i, /atmosfer/i, /atmosphere/i, /soundtrack/i, /müzik/i, /music/i, /mükemmel senaryo/i, /emotional/i, /grafik/i, /visuals/i, /art style/i, /graphics/i, /cinematic/i, /sinematik/i],
+    gameplayGood: [/oynanış/i, /gameplay/i, /combat/i, /bağımlılık/i, /fun/i, /zevk/i, /sarıyor/i, /keyifli/i, /akıcı mekanik/i, /mechanics/i, /satisfying/i, /vuruş hissi/i, /addictive/i, /responsive/i],
+    gameplayBad: [/sıkıcı/i, /boring/i, /repetitive/i, /tekrar/i, /clunky/i, /hantal/i, /boş dünya/i, /empty world/i, /bug dolu/i, /buggy/i, /glitch/i, /kötü kontrol/i, /bad controls/i, /yapay zeka kötü/i, /bad ai/i],
+    priceGood: [/fiyatını hak ediyor/i, /worth/i, /ucuz/i, /bedava/i, /cheap/i, /fiyatı uygun/i, /dolu dolu/i, /doyurucu/i, /kuruşuna kadar/i, /bargain/i, /great value/i],
+    priceBad: [/pahalı/i, /expensive/i, /değmez/i, /not worth/i, /para tuzağı/i, /cash grab/i, /p2w/i, /overpriced/i, /iade ettim/i, /refund/i, /zam/i, /bu fiyata alınmaz/i, /wait for sale/i],
+    patches: [/güncelleme/i, /update/i, /patch/i, /yama/i, /yeni güncelleme/i, /fixed/i, /düzelttiler/i, /bozdular/i, /broke/i, /hotfix/i]
+  };
   /**
    * Main entry point to analyze reviews.
    * @param {Object} processedData - Result from SteamApiClient.processReviews
-   * @param {Object} options - { engineMode, uiLanguage, preferredLanguage, geminiApiKey, onProgress }
+   * @param {Object} options - { engineMode, uiLanguage, preferredLanguage, geminiApiKey, activeModel, onProgress }
    * @returns {Promise<Object>} Analysis result with tier badge and structured summary
    */
   static async analyze(processedData, options = {}) {
     const {
       engineMode = 'rule',
       geminiApiKey = '',
+      activeModel = '',
       uiLanguage = 'auto',
       preferredLanguage = 'all',
       onProgress = () => {}
@@ -35,7 +46,7 @@ class SteamLensAIEngine {
     if (engineMode === 'gemini' && geminiApiKey && geminiApiKey.trim().length > 15) {
       try {
         onProgress({ tier: 'cloud', status: 'running', message: t('loadingGeminiCloud') });
-        const cloudResult = await this.runCloudGeminiAnalysis(validReviews, stats, geminiApiKey.trim(), lang);
+        const cloudResult = await this.runCloudGeminiAnalysis(validReviews, stats, geminiApiKey.trim(), lang, activeModel);
         if (cloudResult) {
           const modelName = cloudResult.modelUsed || 'Flash';
           return {
@@ -72,7 +83,7 @@ class SteamLensAIEngine {
   /**
    * Runs analysis using Google AI Studio BYOK Gemini API with model fallback and language adaptation.
    */
-  static async runCloudGeminiAnalysis(reviews, stats, apiKey, lang = 'en') {
+  static async runCloudGeminiAnalysis(reviews, stats, apiKey, lang = 'en', activeModel = '') {
     const cleanKey = apiKey.trim();
     const posReviews = reviews.filter(r => r.votedUp).slice(0, 10);
     const negReviews = reviews.filter(r => !r.votedUp).slice(0, 10);
@@ -126,9 +137,7 @@ class SteamLensAIEngine {
   "valueAnalysis": "Evaluation of price, content volume, and average playtime value."
 }`;
 
-    const candidateModels = [
-      'models/gemini-3.6-flash',
-      'models/gemini-3.0-flash',
+    const defaultModels = [
       'models/gemini-2.5-flash',
       'models/gemini-2.0-flash',
       'models/gemini-1.5-flash',
@@ -136,6 +145,13 @@ class SteamLensAIEngine {
       'models/gemini-1.5-pro',
       'models/gemini-pro'
     ];
+
+    let candidateModels = [...defaultModels];
+    if (activeModel && typeof activeModel === 'string' && activeModel.trim()) {
+      const cleanModel = activeModel.trim();
+      const formatted = cleanModel.startsWith('models/') ? cleanModel : `models/${cleanModel}`;
+      candidateModels = [formatted, ...defaultModels.filter(m => m !== formatted)];
+    }
 
     let lastError = null;
 
@@ -199,16 +215,7 @@ class SteamLensAIEngine {
     const i18n = (typeof window !== 'undefined' && window.SteamLensI18n) ? window.SteamLensI18n : null;
     const t = (k, p) => i18n ? i18n.t(k, lang, p) : k;
 
-    const keywords = {
-      optBad: [/fps drop/i, /kasma/i, /stutter/i, /donma/i, /optimizasyon berbat/i, /bad optimization/i, /poorly optimized/i, /lag/i, /unplayable/i, /çökme/i, /crash/i, /freez/i, /frame drop/i, /fatal error/i, /siyah ekran/i, /black screen/i, /low fps/i, /fps düşüş/i],
-      optGood: [/smooth/i, /akıcı/i, /optimizasyon iyi/i, /good optimization/i, /well optimized/i, /high fps/i, /60 fps/i, /144 fps/i, /dlss/i, /fsr/i, /runs well/i, /tertemiz/i, /yağ gibi/i, /stabil/i, /stable/i, /flawless/i],
-      storyGood: [/hikaye/i, /story/i, /lore/i, /atmosfer/i, /atmosphere/i, /soundtrack/i, /müzik/i, /music/i, /mükemmel senaryo/i, /emotional/i, /grafik/i, /visuals/i, /art style/i, /graphics/i, /cinematic/i, /sinematik/i],
-      gameplayGood: [/oynanış/i, /gameplay/i, /combat/i, /bağımlılık/i, /fun/i, /zevk/i, /sarıyor/i, /keyifli/i, /akıcı mekanik/i, /mechanics/i, /satisfying/i, /vuruş hissi/i, /addictive/i, /responsive/i],
-      gameplayBad: [/sıkıcı/i, /boring/i, /repetitive/i, /tekrar/i, /clunky/i, /hantal/i, /boş dünya/i, /empty world/i, /bug dolu/i, /buggy/i, /glitch/i, /kötü kontrol/i, /bad controls/i, /yapay zeka kötü/i, /bad ai/i],
-      priceGood: [/fiyatını hak ediyor/i, /worth/i, /ucuz/i, /bedava/i, /cheap/i, /fiyatı uygun/i, /dolu dolu/i, /doyurucu/i, /kuruşuna kadar/i, /bargain/i, /great value/i],
-      priceBad: [/pahalı/i, /expensive/i, /değmez/i, /not worth/i, /para tuzağı/i, /cash grab/i, /p2w/i, /overpriced/i, /iade ettim/i, /refund/i, /zam/i, /bu fiyata alınmaz/i, /wait for sale/i],
-      patches: [/güncelleme/i, /update/i, /patch/i, /yama/i, /yeni güncelleme/i, /fixed/i, /düzelttiler/i, /bozdular/i, /broke/i, /hotfix/i]
-    };
+    const keywords = SteamLensAIEngine.KEYWORDS;
 
     let optBadCount = 0;
     let optGoodCount = 0;

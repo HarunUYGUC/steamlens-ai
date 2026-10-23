@@ -26,6 +26,31 @@ class SteamApiClient {
    * @returns {Promise<Object>}
    */
   static async fetchReviews(appId, options = {}) {
+    // 1. Primary: Route via background service worker to bypass CORS and redirects
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      try {
+        const swResponse = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage(
+            { type: 'FETCH_STEAM_REVIEWS', appId, options },
+            (res) => {
+              if (chrome.runtime.lastError) {
+                reject(new Error(chrome.runtime.lastError.message));
+              } else {
+                resolve(res);
+              }
+            }
+          );
+        });
+
+        if (swResponse && swResponse.success && swResponse.data) {
+          return swResponse.data;
+        }
+      } catch (swErr) {
+        console.warn('[SteamLens AI] SW fetch failed, attempting direct fetch:', swErr);
+      }
+    }
+
+    // 2. Fallback: Direct WebAPI fetch to official IUserReviewsService endpoint
     const {
       filter = 'recent',
       language = 'all',
@@ -34,7 +59,7 @@ class SteamApiClient {
     } = options;
 
     const queryParams = new URLSearchParams({
-      json: '1',
+      appid: String(appId),
       filter: filter,
       language: language,
       num_per_page: Math.min(100, Math.max(20, numPerPage)).toString(),
@@ -43,7 +68,7 @@ class SteamApiClient {
       cursor: '*'
     });
 
-    const endpoint = `https://store.steampowered.com/appreviews/${appId}?${queryParams.toString()}`;
+    const endpoint = `https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/?${queryParams.toString()}`;
 
     try {
       const response = await fetch(endpoint, {
@@ -57,11 +82,8 @@ class SteamApiClient {
       }
 
       const data = await response.json();
-      if (!data || data.success !== 1) {
-        throw new Error('Steam API did not return a successful payload.');
-      }
-
-      return data;
+      const payload = data.response || data;
+      return payload;
     } catch (error) {
       console.error('[SteamLens AI] Failed to fetch reviews:', error);
       throw error;
@@ -161,9 +183,10 @@ class SteamApiClient {
    * @returns {Object}
    */
   static processReviews(rawData) {
-    if (!rawData || !Array.isArray(rawData.reviews)) {
+    const payload = rawData?.response || rawData;
+    if (!payload || !Array.isArray(payload.reviews)) {
       return {
-        querySummary: rawData?.query_summary || {},
+        querySummary: payload?.query_summary || {},
         totalFetched: 0,
         validReviews: [],
         stats: {
@@ -175,13 +198,13 @@ class SteamApiClient {
       };
     }
 
-    const querySummary = rawData.query_summary || {};
+    const querySummary = payload.query_summary || {};
     const validReviews = [];
     let positiveCount = 0;
     let negativeCount = 0;
     let totalPlaytimeMinutes = 0;
 
-    for (const r of rawData.reviews) {
+    for (const r of payload.reviews) {
       const cleaned = this.cleanReviewText(r.review);
 
       if (this.isMemeOrSpam(cleaned)) {
@@ -223,7 +246,7 @@ class SteamApiClient {
 
     return {
       querySummary,
-      totalFetched: rawData.reviews.length,
+      totalFetched: payload.reviews ? payload.reviews.length : 0,
       validCount: totalValid,
       validReviews,
       stats: {
