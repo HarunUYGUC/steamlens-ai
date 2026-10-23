@@ -5,12 +5,12 @@
 ## 🇬🇧 English Store Listing (Global Default)
 
 ### 1. Basic Metadata
-- **Extension Name:** `SteamLens AI — Steam Review Summarizer`
+- **Extension Name:** `SteamLens AI — Steam Review Summarizer & Buyer's Guide`
 - **Short Description (Max 132 chars):**
-  `AI assistant that instantly filters and summarizes Steam reviews using smart NLP and Google Gemini AI.`
+  `Stop reading hundreds of reviews. Get instant AI summaries, pros & cons, and performance scores on Steam game pages.`
 - **Category:** Productivity / Shopping & Entertainment
 - **Default Locale:** `en` (with Turkish `tr` locale included)
-- **Version:** `1.3.0`
+- **Version:** `1.4.1`
 
 ### 2. Store Listing Description (English)
 
@@ -54,9 +54,9 @@ How to Use:
 ## 🇹🇷 Türkçe Mağaza Bilgileri (Turkish Locale)
 
 ### 1. Temel Bilgiler
-- **Uzantı Adı:** `SteamLens AI — Steam İnceleme Özeti`
+- **Uzantı Adı:** `SteamLens AI — Steam İnceleme Özeti & Satın Alma Rehberi`
 - **Kısa Açıklama (Maks. 132 karakter):**
-  `Steam mağazasındaki incelemeleri akıllı NLP ve Google Gemini AI ile anında özetleyen yapay zeka asistanı.`
+  `Yüzlerce yorumu okumayı bırakın. Steam oyun sayfalarında anında yapay zeka özeti, artı/eksi yönler ve optimizasyon puanı alın.`
 - **Kategori:** Üretkenlik / Alışveriş & Eğlence
 
 ### 2. Detaylı Mağaza Açıklaması (Türkçe)
@@ -104,9 +104,12 @@ Nasıl Kullanılır?
    - *Justification / Gerekçe:* Stores user preferences (UI language, review limit, engine mode, and optional local Gemini API key) safely in browser local storage.
 
 2. **`host_permissions` (`https://store.steampowered.com/*`):**
-   - *Justification / Gerekçe:* Required to inject the review summary button on Steam store pages and fetch review data via Steam's public Web API (`appreviews`).
+   - *Justification / Gerekçe:* Required to inject the review summary button on Steam store pages and navigate community game content.
 
-3. **`host_permissions` (`https://generativelanguage.googleapis.com/*`):**
+3. **`host_permissions` (`https://api.steampowered.com/*`):**
+   - *Justification / Gerekçe:* Required to fetch public game reviews and score metrics from Valve's official IUserReviewsService WebAPI.
+
+4. **`host_permissions` (`https://generativelanguage.googleapis.com/*`):**
    - *Justification / Gerekçe:* Required for optional Bring-Your-Own-Key Google Gemini AI cloud analysis when the user opts into Gemini mode.
 
 ---

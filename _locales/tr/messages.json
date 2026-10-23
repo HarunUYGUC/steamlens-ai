@@ -1,14 +1,14 @@
 {
   "appName": {
-    "message": "SteamLens AI — Steam İnceleme Özeti",
+    "message": "SteamLens AI — Steam İnceleme Özeti & Satın Alma Rehberi",
     "description": "The title of the extension in the Chrome Web Store and browser toolbar."
   },
   "appDescription": {
-    "message": "Steam mağazasındaki incelemeleri akıllı NLP ve Google Gemini AI ile anında özetleyen yapay zeka asistanı.",
+    "message": "Yüzlerce yorumu okumayı bırakın. Steam oyun sayfalarında anında yapay zeka özeti, artı/eksi yönler ve optimizasyon puanı alın.",
     "description": "Short description of the extension."
   },
   "actionTitle": {
-    "message": "SteamLens AI — Steam İnceleme Özeti",
+    "message": "SteamLens AI — Steam İnceleme Özeti & Satın Alma Rehberi",
     "description": "Tooltip shown when hovering over the extension icon."
   }
 }
