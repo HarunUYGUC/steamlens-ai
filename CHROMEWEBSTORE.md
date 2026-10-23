@@ -98,6 +98,12 @@ Nasıl Kullanılır?
 
 ---
 
+## 2.5 Tek Amaç Açıklaması (Single Purpose Description)
+- **English (Policy Compliance):**
+  `To summarize and analyze Steam game reviews using fast local NLP and Google Gemini AI.`
+
+---
+
 ## 3. İzinler ve Gerekçeleri (Permissions Justification)
 
 1. **`storage` İzni:**
