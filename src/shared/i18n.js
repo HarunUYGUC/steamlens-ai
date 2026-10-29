@@ -62,6 +62,12 @@
       toastKeyDeleted: '🗑️ API anahtarı başarıyla silindi!',
       
       rateStoreLink: '⭐ Chrome Mağazasında Değerlendirin',
+      
+      // Cross-Promotion (SteamSquad)
+      promoBadge: '🚀 GELİŞTİRİCİDEN DİĞER EKLENTİ',
+      promoTitle: 'SteamSquad — Steam Kütüphane Eşleştirici',
+      promoDesc: 'Arkadaş grubunuzla ortak oyunları anında bulun, indirimleri görün ve oylayın!',
+      promoBtnText: 'Keşfet ↗',
 
       // In-page Steam DOM Trigger Button
       triggerButtonText: 'SteamLens AI ile İncelemeleri Özetle',
@@ -202,6 +208,12 @@
       toastKeyDeleted: '🗑️ API key successfully removed!',
       
       rateStoreLink: '⭐ Rate on Chrome Web Store',
+      
+      // Cross-Promotion (SteamSquad)
+      promoBadge: '🚀 MORE BY DEVELOPER',
+      promoTitle: 'SteamSquad — Steam Library Matcher',
+      promoDesc: 'Find shared games with your squad, compare discounts, and vote what to play!',
+      promoBtnText: 'Explore ↗',
 
       // In-page Steam DOM Trigger Button
       triggerButtonText: 'Summarize Reviews with SteamLens AI',

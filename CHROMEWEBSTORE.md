@@ -10,7 +10,7 @@
   `Stop reading hundreds of reviews. Get instant AI summaries, pros & cons, and performance scores on Steam game pages.`
 - **Category:** Productivity / Shopping & Entertainment
 - **Default Locale:** `en` (with Turkish `tr` locale included)
-- **Version:** `1.4.1`
+- **Version:** `1.4.2`
 
 ### 2. Store Listing Description (English)
 

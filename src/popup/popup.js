@@ -103,6 +103,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnToggleKey) btnToggleKey.title = i18n.t('btnToggleKeyTitle', lang);
     if (btnTestKey) btnTestKey.title = i18n.t('btnTestKeyTitle', lang);
     if (btnDeleteKey) btnDeleteKey.title = i18n.t('btnDeleteKeyTitle', lang);
+    const promoLink = document.getElementById('promo-link');
+    if (promoLink) promoLink.title = i18n.t('promoTitle', lang);
   }
 
   // 4. Toggle password visibility

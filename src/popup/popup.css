@@ -17,10 +17,10 @@ body {
 }
 
 .popup-container {
-  padding: 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 /* Header */
@@ -29,7 +29,7 @@ body {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(102, 192, 244, 0.15);
-  padding-bottom: 12px;
+  padding-bottom: 11px;
 }
 
 .brand {
@@ -165,7 +165,7 @@ body {
 .settings-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 .section-heading {
@@ -254,7 +254,7 @@ label {
 .button-row {
   display: flex;
   gap: 8px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .primary-btn {
@@ -292,6 +292,142 @@ label {
   background: rgba(255, 82, 82, 0.15);
   border-color: #ff5252;
   color: #ff5252;
+}
+
+/* SteamSquad Cross-Promotion Card */
+.promo-card {
+  background: linear-gradient(135deg, rgba(27, 40, 56, 0.75), rgba(23, 36, 51, 0.9));
+  border: 1px solid rgba(102, 192, 244, 0.22);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.promo-card:hover {
+  border-color: rgba(102, 192, 244, 0.45);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.promo-badge-row {
+  display: flex;
+  align-items: center;
+}
+
+.promo-badge {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #66c0f4;
+  background: rgba(102, 192, 244, 0.12);
+  border: 1px solid rgba(102, 192, 244, 0.25);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.promo-link-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.promo-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1b385c, #0f2238);
+  border: 1px solid rgba(102, 192, 244, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  padding: 3px;
+}
+
+.promo-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 5px;
+  display: block;
+}
+
+.promo-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.promo-title-wrapper {
+  overflow: hidden;
+  position: relative;
+  max-height: 16px;
+  transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.promo-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.35;
+  transition: color 0.2s ease;
+}
+
+/* Method 3: Reveal full title on hover smoothly */
+.promo-link-card:hover .promo-title-wrapper {
+  max-height: 36px;
+}
+
+.promo-link-card:hover .promo-title {
+  white-space: normal;
+  text-overflow: clip;
+  color: #66c0f4;
+}
+
+.promo-desc {
+  font-size: 10px;
+  color: #8f98a0;
+  line-height: 1.3;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.promo-btn {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #66c0f4;
+  background: rgba(102, 192, 244, 0.1);
+  border: 1px solid rgba(102, 192, 244, 0.3);
+  padding: 5px 9px;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.promo-link-card:hover .promo-btn {
+  background: #66c0f4;
+  color: #0f1722;
+  border-color: #66c0f4;
+  box-shadow: 0 0 10px rgba(102, 192, 244, 0.4);
+  transform: translateY(-1px);
 }
 
 /* Footer */

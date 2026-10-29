@@ -101,6 +101,16 @@ console.assert(typeof i18n.t('btnDeleteKey', 'en') === 'string', 'btnDeleteKey E
 console.assert(typeof i18n.t('rateStoreLink', 'tr') === 'string', 'rateStoreLink TR should exist');
 console.assert(typeof i18n.t('rateStoreLink', 'en') === 'string', 'rateStoreLink EN should exist');
 
+// Test cross-promotion keys
+console.assert(typeof i18n.t('promoTitle', 'tr') === 'string', 'promoTitle TR should exist');
+console.assert(typeof i18n.t('promoTitle', 'en') === 'string', 'promoTitle EN should exist');
+console.assert(typeof i18n.t('promoDesc', 'tr') === 'string', 'promoDesc TR should exist');
+console.assert(typeof i18n.t('promoDesc', 'en') === 'string', 'promoDesc EN should exist');
+console.assert(typeof i18n.t('promoBtnText', 'tr') === 'string', 'promoBtnText TR should exist');
+console.assert(typeof i18n.t('promoBtnText', 'en') === 'string', 'promoBtnText EN should exist');
+console.assert(typeof i18n.t('promoBadge', 'tr') === 'string', 'promoBadge TR should exist');
+console.assert(typeof i18n.t('promoBadge', 'en') === 'string', 'promoBadge EN should exist');
+
 console.log('\n--- 3. Testing Rule-Based Analyzer (Turkish - TR) ---');
 const analysisTr = SteamLensAIEngine.runRuleBasedAnalysis(processed.validReviews, processed.stats, 'tr');
 console.log('TR Verdict:', analysisTr.verdict);
