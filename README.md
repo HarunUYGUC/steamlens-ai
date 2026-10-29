@@ -1,9 +1,9 @@
-# 🤖 SteamLens AI — Steam Review Summarizer
+# 🤖 SteamLens AI — Steam Review Summarizer & Buyer's Guide
 
 <div align="center">
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.4.0-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
-[![Version](https://img.shields.io/badge/version-1.4.0-informational.svg)](manifest.json)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.4.2-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
+[![Version](https://img.shields.io/badge/version-1.4.2-informational.svg)](manifest.json)
 [![Manifest](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
 [![i18n](https://img.shields.io/badge/i18n-English%20%7C%20Turkish-orange.svg)](src/shared/i18n.js)
 [![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%20%7C%20Fast--NLP-66c0f4.svg)](src/content/ai-engine.js)
