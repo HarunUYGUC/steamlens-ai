@@ -61,7 +61,7 @@
       toastSaveError: '❌ Ayarlar kaydedilemedi.',
       toastKeyDeleted: '🗑️ API anahtarı başarıyla silindi!',
       
-      rateStoreLink: '⭐ Bizi Chrome Mağazasında Değerlendirin',
+      rateStoreLink: '⭐ Chrome Mağazasında Değerlendirin',
 
       // In-page Steam DOM Trigger Button
       triggerButtonText: 'SteamLens AI ile İncelemeleri Özetle',
@@ -201,7 +201,7 @@
       toastSaveError: '❌ Could not save settings.',
       toastKeyDeleted: '🗑️ API key successfully removed!',
       
-      rateStoreLink: '⭐ Rate Us on the Chrome Web Store',
+      rateStoreLink: '⭐ Rate on Chrome Web Store',
 
       // In-page Steam DOM Trigger Button
       triggerButtonText: 'Summarize Reviews with SteamLens AI',
