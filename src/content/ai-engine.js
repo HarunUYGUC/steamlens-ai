@@ -138,19 +138,22 @@ class SteamLensAIEngine {
 }`;
 
     const defaultModels = [
-      'models/gemini-2.5-flash',
-      'models/gemini-2.0-flash',
-      'models/gemini-1.5-flash',
-      'models/gemini-1.5-flash-latest',
-      'models/gemini-1.5-pro',
-      'models/gemini-pro'
+      'models/gemini-3.6-flash',
+      'models/gemini-3.5-flash-lite',
+      'models/gemini-3.1-flash-lite',
+      'models/gemini-3-flash',
+      'models/gemini-2.5-flash-lite',
+      'models/gemini-2.5-flash'
     ];
 
     let candidateModels = [...defaultModels];
     if (activeModel && typeof activeModel === 'string' && activeModel.trim()) {
       const cleanModel = activeModel.trim();
       const formatted = cleanModel.startsWith('models/') ? cleanModel : `models/${cleanModel}`;
-      candidateModels = [formatted, ...defaultModels.filter(m => m !== formatted)];
+      // Ignore obsolete 1.5/2.0 or excluded 3.8 models
+      if (!formatted.includes('1.5') && !formatted.includes('2.0') && !formatted.includes('3.8') && !formatted.endsWith('/gemini-pro')) {
+        candidateModels = [formatted, ...defaultModels.filter(m => m !== formatted)];
+      }
     }
 
     let lastError = null;
@@ -178,6 +181,10 @@ class SteamLensAIEngine {
         });
 
         if (!response.ok) {
+          const errData = await response.json().catch(() => null);
+          const errMsg = errData?.error?.message || `HTTP ${response.status}`;
+          lastError = new Error(errMsg);
+          console.warn(`[SteamLens AI] Model ${modelPath} failed (${response.status}): ${errMsg}`);
           continue;
         }
 

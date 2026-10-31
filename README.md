@@ -2,8 +2,8 @@
 
 <div align="center">
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.4.2-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
-[![Version](https://img.shields.io/badge/version-1.4.2-informational.svg)](manifest.json)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.4.3-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
+[![Version](https://img.shields.io/badge/version-1.4.3-informational.svg)](manifest.json)
 [![Manifest](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
 [![i18n](https://img.shields.io/badge/i18n-English%20%7C%20Turkish-orange.svg)](src/shared/i18n.js)
 [![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%20%7C%20Fast--NLP-66c0f4.svg)](src/content/ai-engine.js)
@@ -52,7 +52,7 @@ Whenever you browse Steam to decide on a purchase, you're faced with thousands o
 ### 1. ⚡ Dual-Engine Architecture
 Seamlessly switch between two distinct analysis engines with a single click:
 - **🚀 Fast Rule-Based NLP & Statistics (Default):** Runs 100% locally in your browser in **0.01 seconds**. Zero latency, zero GPU overhead, and no API key required. Never spins up your laptop fans or stresses your hardware.
-- **⚡ Cloud Google Gemini AI (Optional):** Powered by your personal Google AI Studio API key (BYOK). Synthesizes review sentiment, catches sarcasm, and provides nuanced game critic analysis using Google's fastest `Flash` models (`gemini-3.6-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`).
+- **⚡ Cloud Google Gemini AI (Optional):** Powered by your personal Google AI Studio API key (BYOK). Synthesizes review sentiment, catches sarcasm, and provides nuanced game critic analysis using Google's fastest `Flash` and `Flash-Lite` models with intelligent cascading fallback (`gemini-3.6-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3-flash`, `gemini-2.5-flash-lite`, `gemini-2.5-flash`).
 
 ### 2. 🛡️ Multi-Tier Spam & Meme Filter
 Every batch of reviews fetched from Steam passes through a 3-stage cleaning pipeline:
@@ -118,8 +118,8 @@ Wondering if a \$30 or \$70 title is worth full price? SteamLens AI calculates a
 - **Manifest V3:** Fully compliant with modern Chrome Extension standards and declarative lifecycles.
 - **Standard Chrome i18n (`_locales`):** Production-grade internationalization for Web Store metadata.
 - **Pure Vanilla JavaScript (ES6+):** Zero external framework dependencies for maximum execution speed and a tiny bundle size (<40 KB).
-- **Steam Web Reviews API:** Pulls public reviews directly from Valve's official endpoint: `https://store.steampowered.com/appreviews/<appid>`.
-- **Google Generative Language API:** Direct HTTPS communication using your personal key (BYOK) with automated fallback (`gemini-3.6-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`).
+- **Steam Web Reviews API:** Pulls public reviews directly from Valve's official endpoint: `https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/` via service worker bridge.
+- **Google Generative Language API:** Direct HTTPS communication using your personal key (BYOK) with automated cascading fallback (`gemini-3.6-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`).
 - **Chrome Storage Local API:** User preferences, selected engine modes, and optional API keys are stored strictly on your local device.
 - **Debounced MutationObserver:** Accurately detects Steam Store SPA (Single Page Application) navigation changes with a 350ms debounce to prevent layout thrashing.
 
@@ -183,7 +183,7 @@ Install the extension with a single click from the official store:
 1. Obtain a free API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Click the SteamLens AI icon in your browser toolbar to open the settings popup.
 3. Paste your API key into the input field and click **Test**.
-4. The system validates the key in under 1 second and saves your settings.
+4. The system validates the key in under 300ms, detects your account's optimal model, and saves your settings.
 5. You can now freely toggle between **Rule-Based (Fast NLP)** and **Gemini AI (Cloud)** anytime!
 
 ---

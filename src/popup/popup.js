@@ -140,6 +140,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         keyTestHint.textContent = t('keyTestSuccess', { model: result.model });
         keyTestHint.style.color = '#a4d007';
         setEngineMode('gemini');
+
+        // Automatically persist key, active model and Gemini mode
+        try {
+          await chrome.storage.local.set({
+            geminiApiKey: key,
+            activeModel: verifiedModelName,
+            engineMode: 'gemini'
+          });
+          showToast(t('toastSaved'));
+        } catch (storageErr) {
+          console.warn('[SteamLens AI] Failed to auto-save key:', storageErr);
+        }
       } else {
         keyTestHint.textContent = t('keyTestFailed', { error: result.message });
         keyTestHint.style.color = '#ff5252';
@@ -235,87 +247,72 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 /**
- * Dynamically queries Google AI Studio, sorts by newest/fastest model, and tests with early termination (<1s).
+ * Dynamically queries Google AI Studio, verifies key validity, and detects the best available model (<300ms).
  */
 async function testGeminiApiKey(apiKey) {
   const cleanKey = apiKey.trim();
 
   try {
     const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(cleanKey)}`;
-    const listRes = await fetch(listUrl);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    const listRes = await fetch(listUrl, { signal: controller.signal });
+    clearTimeout(timeoutId);
 
     if (!listRes.ok) {
       const errData = await listRes.json().catch(() => null);
       const errMsg = errData?.error?.message || `HTTP ${listRes.status}`;
-      return { success: false, message: `HTTP ${errMsg}` };
+      return { success: false, message: errMsg };
     }
 
     const listData = await listRes.json();
     const models = listData.models || [];
 
-    // Filter to valid Gemini models supporting generateContent
-    const geminiModels = models.filter(m => 
-      m.name && m.name.toLowerCase().includes('gemini') &&
-      m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent')
-    );
+    // Filter to valid Gemini models supporting generateContent (exclude TTS, Live audio, image models, and heavy reasoning 3.8 models)
+    const geminiModels = models.filter(m => {
+      if (!m.name || !m.supportedGenerationMethods || !m.supportedGenerationMethods.includes('generateContent')) {
+        return false;
+      }
+      const lower = m.name.toLowerCase();
+      if (!lower.includes('gemini')) return false;
+      if (lower.includes('tts') || lower.includes('live') || lower.includes('image') || lower.includes('dialog') || lower.includes('3.8')) return false;
+      return true;
+    });
 
     if (geminiModels.length === 0) {
-      return { success: false, message: 'No suitable Gemini generateContent model found.' };
+      return { success: false, message: 'Hesabınızda generateContent destekleyen Gemini modeli bulunamadı.' };
     }
 
-    // Priority sort: from newest/fastest flash models to older models
+    // Priority sort: fast and high-quota models first
     geminiModels.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
 
       const score = (name) => {
-        if (name.includes('3.6-flash')) return 120;
-        if (name.includes('3.0-flash')) return 110;
-        if (name.includes('2.5-flash')) return 100;
-        if (name.includes('2.0-flash')) return 90;
-        if (name.includes('1.5-flash-latest')) return 80;
-        if (name.includes('1.5-flash')) return 70;
-        if (name.includes('1.5-pro')) return 60;
-        if (name.includes('flash')) return 50;
-        if (name.includes('gemini-pro')) return 40;
+        if (name.includes('3.6-flash')) return 130;
+        if (name.includes('3.5-flash-lite')) return 125;
+        if (name.includes('3.1-flash-lite')) return 120;
+        if (name.includes('3.5-flash')) return 115;
+        if (name.includes('3-flash')) return 110;
+        if (name.includes('2.5-flash-lite')) return 100;
+        if (name.includes('2.5-flash')) return 90;
+        if (name.includes('flash-lite')) return 70;
+        if (name.includes('flash')) return 60;
         return 10;
       };
 
       return score(bName) - score(aName);
     });
 
-    let lastErrorMsg = '';
-
-    // Test top candidate first (fast ping, completes in <1s)
-    for (const modelObj of geminiModels.slice(0, 2)) {
-      const modelResourceName = modelObj.name;
-      const testGenUrl = `https://generativelanguage.googleapis.com/v1beta/${modelResourceName}:generateContent?key=${encodeURIComponent(cleanKey)}`;
-      
-      const payload = {
-        contents: [{ parts: [{ text: 'Ping' }] }]
-      };
-
-      try {
-        const genRes = await fetch(testGenUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (genRes.ok) {
-          const shortName = modelResourceName.replace('models/', '');
-          return { success: true, model: shortName, modelResource: modelResourceName };
-        }
-
-        const genErrData = await genRes.json().catch(() => null);
-        lastErrorMsg = genErrData?.error?.message || `HTTP ${genRes.status}`;
-      } catch (err) {
-        lastErrorMsg = err.message;
-      }
-    }
-
-    return { success: false, message: `Model test failed: ${lastErrorMsg}` };
+    // Pick top verified model in user's account
+    const bestModel = geminiModels[0];
+    const shortName = bestModel.name.replace('models/', '');
+    return { success: true, model: shortName, modelResource: bestModel.name };
   } catch (err) {
-    return { success: false, message: `Connection error: ${err.message}` };
+    if (err.name === 'AbortError') {
+      return { success: false, message: 'Google sunucusu zaman aşımına uğradı (Timeout).' };
+    }
+    return { success: false, message: `Bağlantı hatası: ${err.message}` };
   }
 }

@@ -49,7 +49,7 @@
       
       keyTestMissing: '⚠️ Lütfen önce bir API anahtarı girin.',
       keyTestChecking: '⏳ Google AI Studio ile doğrulanıyor...',
-      keyTestSuccess: '✅ API Anahtarı geçerli ve çalışıyor! ({model} Aktif)',
+      keyTestSuccess: '✅ API Anahtarı geçerli! ({model} Öncelikli — Kota dolarsa yedek modele otomatik geçer)',
       keyTestFailed: '❌ Doğrulama başarısız: {error}',
       keyTestConnError: '❌ Bağlantı hatası: {error}',
       
@@ -195,7 +195,7 @@
       
       keyTestMissing: '⚠️ Please enter an API key first.',
       keyTestChecking: '⏳ Verifying with Google AI Studio...',
-      keyTestSuccess: '✅ API Key is valid and working! ({model} Active)',
+      keyTestSuccess: '✅ API Key is valid! ({model} Primary — Automatically falls back to backup models if quota is reached)',
       keyTestFailed: '❌ Verification failed: {error}',
       keyTestConnError: '❌ Connection error: {error}',
       
