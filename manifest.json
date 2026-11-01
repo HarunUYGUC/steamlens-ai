@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "default_locale": "tr",
   "name": "__MSG_appName__",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "__MSG_appDescription__",
   "icons": {
     "16": "icons/icon-16.png",
@@ -15,7 +15,8 @@
   "host_permissions": [
     "https://store.steampowered.com/*",
     "https://api.steampowered.com/*",
-    "https://generativelanguage.googleapis.com/*"
+    "https://generativelanguage.googleapis.com/*",
+    "https://www.cheapshark.com/*"
   ],
   "action": {
     "default_popup": "src/popup/popup.html",
@@ -37,6 +38,7 @@
       "js": [
         "src/shared/i18n.js",
         "src/content/steam-api.js",
+        "src/content/deals-api.js",
         "src/content/ai-engine.js",
         "src/content/content.js"
       ],

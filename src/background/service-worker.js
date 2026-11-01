@@ -76,6 +76,42 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const data = await response.json();
         const payload = data.response || data;
         sendResponse({ success: true, data: payload });
+      } else if (message.type === 'FETCH_STEAM_PRICE') {
+        const { appId, cc = 'tr' } = message;
+        const endpoint = `https://store.steampowered.com/api/appdetails?appids=${encodeURIComponent(appId)}&cc=${encodeURIComponent(cc)}&filters=price_overview`;
+        const response = await fetch(endpoint, {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Steam Store API responded with HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const appData = data && data[String(appId)];
+        if (appData && appData.success && appData.data) {
+          const isFree = Boolean(appData.data.is_free);
+          const priceOverview = appData.data.price_overview;
+          if (isFree) {
+            sendResponse({ success: true, price: 0, isFree: true, priceFormatted: 'Free' });
+          } else if (priceOverview && typeof priceOverview.final === 'number') {
+            const finalPrice = priceOverview.final / 100;
+            sendResponse({
+              success: true,
+              price: finalPrice,
+              initialPrice: (priceOverview.initial || priceOverview.final) / 100,
+              discountPercent: priceOverview.discount_percent || 0,
+              priceFormatted: priceOverview.final_formatted || `$${finalPrice.toFixed(2)}`,
+              currency: priceOverview.currency || 'USD'
+            });
+          } else {
+            sendResponse({ success: true, price: null });
+          }
+        } else {
+          sendResponse({ success: false, error: 'App data not found' });
+        }
       } else {
         sendResponse({ success: false, error: 'Unknown message type' });
       }

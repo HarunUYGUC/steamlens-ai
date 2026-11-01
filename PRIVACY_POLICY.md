@@ -36,26 +36,35 @@ All data processed by SteamLens AI is used exclusively for providing core extens
 * **Third-Party Services:**
   * **Valve Corporation (Steam):** Public review queries are made directly from your browser to `store.steampowered.com` under Valve's Public API terms.
   * **Google Cloud (Google AI Studio):** If you use the optional Gemini mode, requests are sent directly to Google AI endpoints governed by [Google's Privacy Policy](https://policies.google.com/privacy).
+  * **CheapShark API:** Used strictly to fetch public digital storefront pricing for the currently viewed Steam App ID (`cheapshark.com`) without transmitting any personal identifier.
 * No data is shared with any other third party, advertiser, or analytics provider.
 
 ---
 
-## 5. Security
-All communication with external APIs (Steam Store and Google Generative Language) occurs exclusively over secure, encrypted HTTPS connections. Your optional Gemini API key is never transmitted to us or any party other than Google AI Studio.
+## 5. Affiliate Disclosure & External Store Links
+SteamLens AI includes a smart price-comparison buyer's guide feature that assists users in discovering legitimate discounts from authorized Steam key distributors (such as Humble Store):
+* **User-Initiated Navigation:** All store links are opened only when explicitly clicked by the user in a new tab. The Extension does not execute background redirects, hidden iframes, or cookie stuffing.
+* **Affiliate Partnerships:** When you click on an authorized store deal link and make a purchase, SteamLens AI may earn a small referral commission at no additional cost to you. This directly supports the ongoing maintenance and development of the extension.
+* **Strictly Authorized Resellers:** SteamLens AI only references official, publisher-authorized digital retailers that supply legitimate Steam activation keys.
 
 ---
 
-## 6. Children's Privacy
+## 6. Security
+All communication with external APIs (Steam Store, CheapShark, and Google Generative Language) occurs exclusively over secure, encrypted HTTPS connections. Your optional Gemini API key is never transmitted to us or any party other than Google AI Studio.
+
+---
+
+## 7. Children's Privacy
 SteamLens AI does not knowingly collect or solicit any personal information from children under the age of 13.
 
 ---
 
-## 7. Changes to This Privacy Policy
+## 8. Changes to This Privacy Policy
 We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated "Last Updated" date.
 
 ---
 
-## 8. Contact Us
+## 9. Contact Us
 If you have any questions or concerns about this Privacy Policy or SteamLens AI, please open an issue on our GitHub repository or contact the developer:
 * **GitHub Repository:** [https://github.com/HarunUYGUC/steamlens-ai](https://github.com/HarunUYGUC/steamlens-ai)
 * **Support / Developer Email:** Available on our Chrome Web Store listing page.

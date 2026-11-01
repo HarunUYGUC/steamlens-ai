@@ -4,9 +4,10 @@ const fs = require('fs');
 // Mock window environment
 global.window = global;
 
-// Load i18n, steam-api.js and ai-engine.js
+// Load i18n, steam-api.js, deals-api.js and ai-engine.js
 eval(fs.readFileSync('./src/shared/i18n.js', 'utf8'));
 eval(fs.readFileSync('./src/content/steam-api.js', 'utf8'));
+eval(fs.readFileSync('./src/content/deals-api.js', 'utf8'));
 eval(fs.readFileSync('./src/content/ai-engine.js', 'utf8'));
 
 console.log('--- 1. Testing SteamApiClient ---');
@@ -131,4 +132,48 @@ console.assert(analysisEn.pros.length > 0, 'Should generate English pros');
 console.assert(analysisEn.cons.length > 0, 'Should generate English cons');
 console.assert(analysisEn.verdict.includes('approval') || analysisEn.verdict.includes('recommended') || analysisEn.verdict.includes('sentiment'), 'English verdict check');
 
-console.log('\n🎉 ALL UNIT & LOCALIZATION TESTS PASSED SUCCESSFULLY!');
+console.log('\n--- 5. Testing DealsApiClient & Affiliate Module ---');
+const dealsClient = window.DealsApiClient;
+console.assert(dealsClient != null, 'DealsApiClient should be defined');
+
+// Test title sanitization
+const title1 = dealsClient.sanitizeGameTitle('Cyberpunk 2077®: Ultimate Edition [PC]');
+console.assert(title1 === 'Cyberpunk 2077', `Expected 'Cyberpunk 2077', got '${title1}'`);
+
+const title2 = dealsClient.sanitizeGameTitle('The Witcher® 3: Wild Hunt - Complete Edition');
+console.assert(title2 === 'The Witcher 3 Wild Hunt', `Expected 'The Witcher 3 Wild Hunt', got '${title2}'`);
+
+const title3 = dealsClient.sanitizeGameTitle('Resident Evil 4™ Remake [VR]');
+console.assert(title3 === 'Resident Evil 4', `Expected 'Resident Evil 4', got '${title3}'`);
+console.log('Title sanitization passed:', { title1, title2, title3 });
+
+// Test Humble search URL generator
+const searchUrl = dealsClient.getHumbleSearchUrl('Cyberpunk 2077');
+console.assert(searchUrl.includes('partner=steamlens-ai'), 'Humble URL must contain partner=steamlens-ai');
+console.assert(searchUrl.includes('search=Cyberpunk%202077'), 'Humble URL must encode clean title');
+console.log('Generated Humble affiliate search URL:', searchUrl);
+
+// Test regional pricing country code resolution
+console.assert(dealsClient.resolveCountryCode('tr') === 'tr', 'TR should resolve to cc=tr (MENA-USD)');
+console.assert(dealsClient.resolveCountryCode('en') === 'us', 'EN should resolve to cc=us (US-USD)');
+console.log('Regional country code resolution verified (TR -> cc=tr, EN -> cc=us).');
+
+// Test Deals i18n keys
+console.assert(typeof i18n.t('dealBtnStore', 'tr') === 'string', 'dealBtnStore TR should exist');
+console.assert(typeof i18n.t('dealBtnStore', 'en') === 'string', 'dealBtnStore EN should exist');
+console.assert(typeof i18n.t('dealTooltipText', 'tr') === 'string', 'dealTooltipText TR should exist');
+console.assert(typeof i18n.t('dealTooltipText', 'en') === 'string', 'dealTooltipText EN should exist');
+console.assert(typeof i18n.t('dealTeaserBadge', 'tr') === 'string', 'dealTeaserBadge TR should exist');
+console.assert(typeof i18n.t('dealTeaserBadge', 'en') === 'string', 'dealTeaserBadge EN should exist');
+console.assert(typeof i18n.t('dealCardTitle', 'tr') === 'string', 'dealCardTitle TR should exist');
+console.assert(typeof i18n.t('dealCardTitle', 'en') === 'string', 'dealCardTitle EN should exist');
+console.assert(typeof i18n.t('dealBuyBtn', 'tr') === 'string', 'dealBuyBtn TR should exist');
+console.assert(typeof i18n.t('dealBuyBtn', 'en') === 'string', 'dealBuyBtn EN should exist');
+console.assert(typeof i18n.t('dealOfficialGuarantee', 'tr') === 'string', 'dealOfficialGuarantee TR should exist');
+console.assert(typeof i18n.t('dealAffiliateDisclosure', 'tr') === 'string', 'dealAffiliateDisclosure TR should exist');
+
+const teaserSample = i18n.t('dealTeaserText', 'tr', { savings: 35, price: '$19.49' });
+console.assert(teaserSample.includes('%35') && teaserSample.includes('$19.49'), 'Teaser text check failed');
+console.log('Teaser TR text sample:', teaserSample);
+
+console.log('\n🎉 ALL UNIT, AFFILIATE & LOCALIZATION TESTS PASSED SUCCESSFULLY!');

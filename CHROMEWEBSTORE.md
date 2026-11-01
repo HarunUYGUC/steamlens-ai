@@ -10,7 +10,7 @@
   `Stop reading hundreds of reviews. Get instant AI summaries, pros & cons, and performance scores on Steam game pages.`
 - **Category:** Productivity / Shopping & Entertainment
 - **Default Locale:** `en` (with Turkish `tr` locale included)
-- **Version:** `1.4.3`
+- **Version:** `1.5.0`
 
 ### 2. Store Listing Description (English)
 
@@ -37,6 +37,9 @@ SteamLens AI scans Steam community reviews in seconds, cleans out spam and unhel
 - ⚡ Recent Updates & Patch Status
 - ⏱️ Price / Time / Value Analysis
 - 📊 Community Approval & Average Playtime
+
+✅ Smart Price & Authorized Deal Alerts:
+- Automatically cross-checks legitimate, publisher-authorized digital retailers (Humble Store) and highlights deals strictly when cheaper than Steam's current price.
 
 ✅ 100% Privacy-Focused:
 - Zero user data collection or telemetry.
@@ -85,6 +88,9 @@ SteamLens AI, oyun sayfalarındaki topluluk incelemelerini tarar, spam ve meme y
 - ⏱️ Fiyat / Süre / Değer Analizi
 - 📊 Topluluk Onayı & Ortalama Oynanış Süresi
 
+✅ Akıllı Fiyat ve Yetkili Mağaza Fırsatları:
+- Yetkili Steam key satıcılarını (Humble Store) kontrol eder ve yalnızca oyun Steam'in o anki fiyatından daha ucuz olduğunda meşru indirimleri gösterir.
+
 ✅ Gizlilik ve Güvenlik Odaklı:
 - Verileriniz asla üçüncü taraflarla paylaşılmaz.
 - API anahtarlarınız yalnızca kendi tarayıcınızda (yerel olarak) saklanır.
@@ -118,6 +124,9 @@ Nasıl Kullanılır?
 4. **`host_permissions` (`https://generativelanguage.googleapis.com/*`):**
    - *Justification / Gerekçe:* Required for optional Bring-Your-Own-Key Google Gemini AI cloud analysis when the user opts into Gemini mode.
 
+5. **`host_permissions` (`https://www.cheapshark.com/*`):**
+   - *Justification / Gerekçe:* Required to query public digital game prices from authorized storefronts to verify if deals are strictly cheaper than Steam.
+
 ---
 
 ## 4. Gizlilik Politikası (Privacy Policy URL & Disclosures)
@@ -129,4 +138,5 @@ Nasıl Kullanılır?
 1. **Veri Toplama (Collection):** No Personally Identifiable Information (PII), browsing history, or user credentials are collected. User settings and optional Gemini API keys are kept 100% local.
 2. **Veri İşleme (Processing):** Steam reviews are processed locally in JavaScript (Fast NLP) or sent to Google Gemini via HTTPS only when BYOK mode is enabled.
 3. **Veri Saklama (Storage):** All data is stored on-device via `chrome.storage.local`. Zero external databases.
-4. **Veri Paylaşma (Sharing):** We never sell, rent, or transfer user data to third parties. Requests are made only to official Steam and Google Gemini endpoints.
+4. **Veri Paylaşma (Sharing):** We never sell, rent, or transfer user data to third parties. Requests are made only to official Steam, CheapShark, and Google Gemini endpoints.
+5. **Ortaklık Beyanı (Affiliate Disclosure):** SteamLens AI includes authorized store affiliate links that may generate a small commission upon purchase at no extra cost to the user. All external links are user-initiated with zero background redirects or cookie stuffing.

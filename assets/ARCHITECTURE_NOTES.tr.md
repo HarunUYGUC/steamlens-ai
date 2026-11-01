@@ -31,6 +31,11 @@ Bu doküman; **SteamLens AI** Chrome uzantısının geliştirme sürecinde alın
 6. [Stil Sistemi ve Algılanan Performans](#6-stil-sistemi-ve-algılanan-performans)
    - [6.1 Steam Natif Dark Theme ve CSS Değişkenleri (`var(--sl-*)`)](#61-steam-natif-dark-theme-ve-css-değişkenleri-varsl-)
    - [6.2 Skeleton Loading ile Sıfır Düzen Kayması (CLS Önleme)](#62-skeleton-loading-ile-sıfır-düzen-kayması-cls-önleme)
+7. [Yetkili Key Distribütörleri ve Komisyon (Affiliate) Mimarisi](#7-yetkili-key-distribütörleri-ve-komisyon-affiliate-mimarisi)
+   - [7.1 CheapShark API ve Doğrudan Partner Yönlendirmesi (Redirect Bypass)](#71-cheapshark-api-ve-doğrudan-partner-yönlendirmesi-redirect-bypass)
+   - [7.2 Katı Fiyat Karşılaştırma Mantığı: `Humble Fiyatı < Steam Fiyatı`](#72-katı-fiyat-karşılaştırma-mantığı-humble-fiyatı--steam-fiyatı)
+   - [7.3 Gelişmiş Başlık Temizleme (`sanitizeGameTitle`) ve İsabetli Arama](#73-gelişmiş-başlık-temizleme-sanitizegametitle-ve-isabetli-arama)
+   - [7.4 İki Kademeli Önbellek (Memory + Storage) ve 429 Sessiz Geri Çekilme](#74-iki-kademeli-önbellek-memory--storage-ve-429-sessiz-geri-çekilme)
 
 ---
 
@@ -474,6 +479,50 @@ SteamLens AI, Steam mağazasının koyu temasıyla kusursuz bir görsel uyum yak
 Butona tıklandığı anda `renderLoading()` fonksiyonu devreye girer:
 * **Algılanan Hız (Perceived Performance):** Kullanıcıya boş bir ekran veya sadece dönen bir çark göstermek yerine, analiz kartının tam iskeletini gri parıldayan kutularla (`.sl-skeleton`) anında çizer.
 * **Kümülatif Düzen Kaymasını (CLS) Engelleme:** Kartın boyutları önceden sabitlendiği için, analiz sonuçları geldiğinde sayfa aniden aşağıya doğru zıplamaz (Layout Shift yaşanmaz); içerik pürüzsüzce iskeletin yerini alır.
+
+---
+
+## 7. Yetkili Key Distribütörleri ve Komisyon (Affiliate) Mimarisi
+
+### 7.1 CheapShark API ve Doğrudan Partner Yönlendirmesi (Redirect Bypass)
+
+SteamLens AI, oyun satın alma karar anında çalışan bir rehber (*Buyer's Guide*) olduğu için, kullanıcıya resmi distribütörlerden (**Humble Store**) gerçek indirimleri sunar.
+
+* **CheapShark API'sinin Rolü:** CheapShark'ın açık REST API'si (`api.cheapshark.com/1.0/deals?steamAppID=...&storeID=11`) API anahtarı gerektirmeden şimşek hızında güncel fiyat ve indirim oranını döner.
+* **Redirect Bypass (Komisyonun Korunması):** CheapShark normalde kendi affiliate yönlendirmesini (`cheapshark.com/redirect`) şart koşar. SteamLens AI, CheapShark'ı **sadece fiyat sorgulama** amacıyla kullanır. Satın alma bağlantıları ise doğrudan **Humble Store** arama sayfasına kendi resmi Impact.com ortaklık parametreniz (`?partner=steamlens-ai`) ile oluşturulur. Böylece %100 komisyon güvenliği sağlanır.
+
+---
+
+### 7.2 Bölgesel Fiyatlandırma (MENA-USD vs US-USD) ve Resmi Steam Store API
+
+Steam sayfalarında sadece DOM üzerinden fiyat çekmek (sayfadaki DLC, Soundtrack veya pahalı Deluxe paketlerin araya girmesi sebebiyle) yanıltıcı olabilmektedir. Ayrıca Türkiye'deki kullanıcılar için yayıncılar tarafından özel **MENA-USD** bölgesel fiyatlandırmaları tanımlanmaktadır.
+
+1. **Resmi Valve Store API (`store.steampowered.com/api/appdetails`):**
+   * Kullanıcının tercih ettiği dil **Türkçe (`tr`)** ise istek `cc=tr` (Türkiye & MENA-USD) parametresiyle atılır.
+   * Kullanıcının dili **İngilizce (`en`)** ise istek `cc=us` (US Standart USD) parametresiyle atılır.
+   * API, doğrudan ana oyunun (`appId`) net ve güncel satış fiyatını (`final / 100`) sayısal olarak döndürür; paket/eklenti karışıklığı sıfıra iner.
+2. **Kapsamlı DOM Fallback (`getSteamPriceFromDOM`):** Ağ veya API erişimi kısıtlandığında, sadece ana oyuna ait `.game_area_purchase_game[data-ds-appid]` ve `meta[itemprop="price"]` etiketlerine odaklanan güvenli bir DOM yedekleyicisi devreye girer.
+3. **Kıyaslama Şartı:** `isCheaperThanSteam = (humbleSalePrice < steamPrice - 0.05)`
+4. **Koşullu Gösterim:**
+   * **Humble, o bölgenin Steam fiyatından daha ucuzsa:** Fırsat rozeti özet butonunun üstünde belirir.
+   * **Steam daha ucuzsa veya aynıysa (örneğin MENA-USD Steam'de zaten çok daha avantajlıysa):** Fırsat rozeti gizlenir, sayfa temiz kalır. Kullanıcıya asla Steam'den daha pahalı bir link "indirim" diye sunulmaz.
+
+---
+
+### 7.3 Gelişmiş Başlık Temizleme (`sanitizeGameTitle`) ve İsabetli Arama
+
+Steam oyun başlıkları genellikle mağaza aramalarını bozan ekler içerir (`Cyberpunk 2077®: Ultimate Edition [PC]`). `sanitizeGameTitle` boru hattı 5 aşamalı regex ile başlığı arındırır:
+* Ticari marka simgeleri (`™`, `®`, `©`),
+* Bölge ve platform etiketleri (`[VR]`, `(LATAM)`, `[PC]`),
+* Sürüm ve paket ekleri (`Ultimate Edition`, `Gold Edition`, `GOTY Edition`, `Remastered`).
+* Sonuç: `https://www.humblebundle.com/store/search?search=Cyberpunk%202077&partner=steamlens-ai`
+
+---
+
+### 7.4 İki Kademeli Önbellek (Memory + Storage) ve 429 Sessiz Geri Çekilme
+
+* **6 Saatlik Dinamik Önbellek:** SteamLens AI tekil oyun sayfalarında çalıştığı için önbellek süresi 6 saat olarak optimize edilmiştir. Böylece gün içi flash indirimler ve saatlik fiyat değişimleri kaçırılmazken, aynı oyuna tekrar girildiğinde API'ye istek gitmez, 0 ms gecikmeyle çalışır.
+* **429 Silent Backoff:** CheapShark kota sınırına ulaşırsa (HTTP 429), sistem konsolu veya arayüzü hataya boğmaz; 3 dakikalık sessiz bekleme moduna geçer ve arayüzü temiz fallback modunda tutar.
 
 ---
 

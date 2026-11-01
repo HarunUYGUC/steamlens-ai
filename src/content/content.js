@@ -139,6 +139,11 @@
       <span>${escapeHtml(t('triggerButtonText'))}</span>
       <span class="sl-btn-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
     `;
+
+    const wrapper = document.getElementById('steamlens-trigger-wrapper');
+    if (wrapper && state.currentAppId) {
+      checkAndRenderDealTeaser(wrapper, state.currentAppId, true);
+    }
   }
 
   /**
@@ -164,8 +169,10 @@
    * Injects the SteamLens AI trigger button above the purchase area.
    */
   function injectTriggerButton() {
-    if (document.getElementById('steamlens-trigger-wrapper')) {
+    const existingWrapper = document.getElementById('steamlens-trigger-wrapper');
+    if (existingWrapper) {
       updateTriggerButton();
+      checkAndRenderDealTeaser(existingWrapper, state.currentAppId);
       return;
     }
 
@@ -194,6 +201,72 @@
 
     wrapper.appendChild(btn);
     targetContainer.parentNode.insertBefore(wrapper, targetContainer);
+
+    // Asynchronously check and render deal teaser if cheaper than Steam
+    checkAndRenderDealTeaser(wrapper, state.currentAppId);
+  }
+
+  /**
+   * Asynchronously queries authorized distributor deal and renders a smart teaser badge
+   * ONLY if Humble Store is strictly cheaper than Steam's current price.
+   * 
+   * @param {HTMLElement} wrapper - The trigger button wrapper
+   * @param {string|number} appId - The Steam App ID
+   * @param {boolean} forceRefresh - If true, re-renders even if already present
+   */
+  async function checkAndRenderDealTeaser(wrapper, appId, forceRefresh = false) {
+    if (!window.DealsApiClient || !appId || !wrapper) return;
+
+    const existingTeaser = document.getElementById('steamlens-deal-teaser');
+    if (existingTeaser && existingTeaser.dataset.appId === String(appId) && !forceRefresh) {
+      return;
+    }
+
+    try {
+      const gameTitle = getGameTitle();
+      const currentLang = getLang();
+      const deal = await window.DealsApiClient.getBestDeal(appId, gameTitle, currentLang);
+
+      // Smart condition: ONLY show teaser if deal exists AND it is strictly cheaper than Steam!
+      if (deal && deal.hasDeal && deal.isCheaperThanSteam && deal.salePriceFormatted) {
+        let teaser = document.getElementById('steamlens-deal-teaser');
+        if (!teaser) {
+          teaser = document.createElement('a');
+          teaser.id = 'steamlens-deal-teaser';
+          teaser.target = '_blank';
+          teaser.rel = 'noopener sponsored';
+          // Place side-by-side next to the trigger button
+          wrapper.appendChild(teaser);
+        }
+        teaser.dataset.appId = String(appId);
+        teaser.href = deal.dealUrl;
+
+        const isTr = currentLang === 'tr';
+        const discountTag = deal.savingsPercent > 0 
+          ? (isTr ? `(-%${deal.savingsPercent})` : `(-${deal.savingsPercent}%)`)
+          : '';
+
+        const tooltip = t('dealTooltipText', { 
+          savings: deal.savingsVsSteamPercent, 
+          price: deal.salePriceFormatted 
+        });
+
+        teaser.title = tooltip;
+
+        teaser.innerHTML = `
+          <span class="sl-deal-fire">🔥</span>
+          <span class="sl-deal-store">${escapeHtml(t('dealBtnStore'))}</span>
+          <span class="sl-deal-price">${escapeHtml(deal.salePriceFormatted)}</span>
+          ${discountTag ? `<span class="sl-deal-discount">${escapeHtml(discountTag)}</span>` : ''}
+          <span class="sl-deal-arrow">➔</span>
+        `;
+      } else {
+        const teaser = document.getElementById('steamlens-deal-teaser');
+        if (teaser) teaser.remove();
+      }
+    } catch (err) {
+      console.warn('[SteamLens AI] Error rendering deal teaser:', err);
+    }
   }
 
   /**
@@ -217,6 +290,8 @@
     if (btn) btn.remove();
     const container = document.getElementById('steamlens-container');
     if (container) container.remove();
+    const teaser = document.getElementById('steamlens-deal-teaser');
+    if (teaser) teaser.remove();
   }
 
   /**

@@ -103,6 +103,18 @@
       footerSummary: 'SteamLens AI — Steam İnceleme Özeti',
       footerDisclaimer: 'Spam ve meme yorumlar filtrelenerek saf geri bildirim analiz edilir 🛡️',
 
+      // Authorized Store Deals & Affiliate
+      dealBtnStore: 'Humble:',
+      dealTooltipText: 'Humble Store\'da Steam\'den %{savings} daha ucuz ({price})',
+      dealTeaserBadge: 'YETKİLİ MAĞAZA FIRSATI',
+      dealTeaserText: 'Humble Store\'da Steam\'den %{savings} daha ucuz ({price})',
+      dealTeaserBtn: 'Fırsatı Gör ➔',
+      dealCardTitle: '🏷️ Yetkili Mağaza Fırsatı (Humble Store)',
+      dealSavingsBadge: 'Steam\'den %{savings} Daha Ucuz',
+      dealBuyBtn: 'Humble Store\'dan Steam Key Olarak Satın Al ➔',
+      dealOfficialGuarantee: '✅ Resmi yayıncı onaylı Steam Key garantisi',
+      dealAffiliateDisclosure: 'ℹ️ Ortaklık bağlantısı içerir. Satın alımlarınız SteamLens AI gelişimini destekler.',
+
       // Error States
       errorTitle: 'Analiz Tamamlanamadı',
       errorNoReviews: 'Bu oyun için yeterli inceleme bulunamadı veya tüm incelemeler filtreye takıldı.',
@@ -248,6 +260,18 @@
       valueTitle: '⏱️ Price / Time / Value Analysis',
       footerSummary: 'SteamLens AI — Steam Review Summarizer',
       footerDisclaimer: 'Spam and meme reviews filtered to extract pure player feedback 🛡️',
+
+      // Authorized Store Deals & Affiliate
+      dealBtnStore: 'Humble:',
+      dealTooltipText: '{savings}% cheaper than Steam on Humble Store ({price})',
+      dealTeaserBadge: 'AUTHORIZED STORE DEAL',
+      dealTeaserText: '{savings}% cheaper than Steam on Humble Store ({price})',
+      dealTeaserBtn: 'View Deal ➔',
+      dealCardTitle: '🏷️ Authorized Reseller Deal (Humble Store)',
+      dealSavingsBadge: '{savings}% Cheaper Than Steam',
+      dealBuyBtn: 'Buy as Steam Key on Humble Store ➔',
+      dealOfficialGuarantee: '✅ Official publisher-authorized Steam Key guarantee',
+      dealAffiliateDisclosure: 'ℹ️ Contains affiliate link. Purchases support SteamLens AI development.',
 
       // Error States
       errorTitle: 'Analysis Failed',
