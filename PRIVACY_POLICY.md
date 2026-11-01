@@ -1,6 +1,6 @@
 # Privacy Policy for SteamLens AI
 
-**Last Updated:** August 26, 2026  
+**Last Updated:** November 1, 2026  
 **Effective Date:** August 26, 2026
 
 SteamLens AI ("we", "our", or "the Extension") is committed to protecting user privacy. This Privacy Policy describes how SteamLens AI handles data in accordance with the Google Chrome Web Store Developer Program Policies.
