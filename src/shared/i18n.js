@@ -104,14 +104,14 @@
       footerDisclaimer: 'Spam ve meme yorumlar filtrelenerek saf geri bildirim analiz edilir 🛡️',
 
       // Authorized Store Deals & Affiliate
-      dealBtnStore: 'Humble:',
-      dealTooltipText: 'Humble Store\'da Steam\'den %{savings} daha ucuz ({price})',
+      dealBtnStore: 'Fırsat:',
+      dealTooltipText: '{store} üzerinde Steam\'den %{savings} daha ucuz ({price})',
       dealTeaserBadge: 'YETKİLİ MAĞAZA FIRSATI',
-      dealTeaserText: 'Humble Store\'da Steam\'den %{savings} daha ucuz ({price})',
+      dealTeaserText: '{store} üzerinde Steam\'den %{savings} daha ucuz ({price})',
       dealTeaserBtn: 'Fırsatı Gör ➔',
-      dealCardTitle: '🏷️ Yetkili Mağaza Fırsatı (Humble Store)',
+      dealCardTitle: '🏷️ Yetkili Mağaza Fırsatı ({store})',
       dealSavingsBadge: 'Steam\'den %{savings} Daha Ucuz',
-      dealBuyBtn: 'Humble Store\'dan Steam Key Olarak Satın Al ➔',
+      dealBuyBtn: '{store}\'dan Steam Key Olarak Satın Al ➔',
       dealOfficialGuarantee: '✅ Resmi yayıncı onaylı Steam Key garantisi',
       dealAffiliateDisclosure: 'ℹ️ Ortaklık bağlantısı içerir. Satın alımlarınız SteamLens AI gelişimini destekler.',
 
@@ -262,14 +262,14 @@
       footerDisclaimer: 'Spam and meme reviews filtered to extract pure player feedback 🛡️',
 
       // Authorized Store Deals & Affiliate
-      dealBtnStore: 'Humble:',
-      dealTooltipText: '{savings}% cheaper than Steam on Humble Store ({price})',
+      dealBtnStore: 'Deal:',
+      dealTooltipText: '{savings}% cheaper than Steam on {store} ({price})',
       dealTeaserBadge: 'AUTHORIZED STORE DEAL',
-      dealTeaserText: '{savings}% cheaper than Steam on Humble Store ({price})',
+      dealTeaserText: '{savings}% cheaper than Steam on {store} ({price})',
       dealTeaserBtn: 'View Deal ➔',
-      dealCardTitle: '🏷️ Authorized Reseller Deal (Humble Store)',
+      dealCardTitle: '🏷️ Authorized Reseller Deal ({store})',
       dealSavingsBadge: '{savings}% Cheaper Than Steam',
-      dealBuyBtn: 'Buy as Steam Key on Humble Store ➔',
+      dealBuyBtn: 'Buy as Steam Key on {store} ➔',
       dealOfficialGuarantee: '✅ Official publisher-authorized Steam Key guarantee',
       dealAffiliateDisclosure: 'ℹ️ Contains affiliate link. Purchases support SteamLens AI development.',
 

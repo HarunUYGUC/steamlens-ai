@@ -2,8 +2,8 @@
 
 <div align="center">
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.5.0-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
-[![Version](https://img.shields.io/badge/version-1.5.0-informational.svg)](manifest.json)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.6.0-blue?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lmkldcljijogblmkggcclnjffadheaoo?utm_source=item-share-cb)
+[![Version](https://img.shields.io/badge/version-1.6.0-informational.svg)](manifest.json)
 [![Manifest](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
 [![i18n](https://img.shields.io/badge/i18n-English%20%7C%20Turkish-orange.svg)](src/shared/i18n.js)
 [![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%20%7C%20Fast--NLP-66c0f4.svg)](src/content/ai-engine.js)
@@ -144,6 +144,7 @@ steamlens-ai/
 │   │   └── service-worker.js  # Extension lifecycle, storage defaults, and message bridge
 │   ├── content/
 │   │   ├── steam-api.js       # Steam API client, 3-stage BBCode and spam filtering
+│   │   ├── deals-api.js       # Multi-store deal comparator & affiliate engine (GameBillet & Humble)
 │   │   ├── ai-engine.js       # Dual-Engine core (Gemini Flash + Fast Rule NLP)
 │   │   ├── content.js         # Steam DOM injection, SPA observer, scorecard rendering
 │   │   └── content.css        # Steam-native dark theme styles, skeletons, and badges

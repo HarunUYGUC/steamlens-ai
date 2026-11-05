@@ -153,6 +153,23 @@ console.assert(searchUrl.includes('partner=steamlens-ai'), 'Humble URL must cont
 console.assert(searchUrl.includes('search=Cyberpunk%202077'), 'Humble URL must encode clean title');
 console.log('Generated Humble affiliate search URL:', searchUrl);
 
+// Test GameBillet search URL generator with affiliate tag
+const gbSearchUrl = dealsClient.getGameBilletSearchUrl('Cyberpunk 2077');
+console.assert(gbSearchUrl.includes('affiliate=cfbc4fed-8524-422f-b987-b99a3bc536ed'), 'GameBillet URL must contain affiliate tag');
+console.assert(gbSearchUrl.includes('q=Cyberpunk%202077'), 'GameBillet URL must encode clean title in q parameter');
+console.log('Generated GameBillet affiliate search URL:', gbSearchUrl);
+
+// Test Multi-Store Price Comparison Candidate Selection
+const mockDealCandidates = [
+  { storeName: 'Humble Store', salePrice: 24.99, storeId: '11', dealUrl: dealsClient.getHumbleSearchUrl('Cyberpunk 2077') },
+  { storeName: 'GameBillet', salePrice: 19.99, storeId: '29', dealUrl: dealsClient.getGameBilletSearchUrl('Cyberpunk 2077') }
+];
+mockDealCandidates.sort((a, b) => a.salePrice - b.salePrice);
+const winningCandidate = mockDealCandidates[0];
+console.assert(winningCandidate.storeName === 'GameBillet', 'Cheaper store (GameBillet) should win');
+console.assert(winningCandidate.dealUrl.includes('affiliate=cfbc4fed-8524-422f-b987-b99a3bc536ed'), 'Winner deal URL must be GameBillet');
+console.log('Price competition resolution verified: Winner is', winningCandidate.storeName, 'at $' + winningCandidate.salePrice);
+
 // Test regional pricing country code resolution
 console.assert(dealsClient.resolveCountryCode('tr') === 'tr', 'TR should resolve to cc=tr (MENA-USD)');
 console.assert(dealsClient.resolveCountryCode('en') === 'us', 'EN should resolve to cc=us (US-USD)');

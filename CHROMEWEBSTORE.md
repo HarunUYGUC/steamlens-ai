@@ -10,7 +10,7 @@
   `Stop reading hundreds of reviews. Get instant AI summaries, pros & cons, and performance scores on Steam game pages.`
 - **Category:** Productivity / Shopping & Entertainment
 - **Default Locale:** `en` (with Turkish `tr` locale included)
-- **Version:** `1.5.0`
+- **Version:** `1.6.0`
 
 ### 2. Store Listing Description (English)
 
@@ -38,8 +38,8 @@ SteamLens AI scans Steam community reviews in seconds, cleans out spam and unhel
 - ⏱️ Price / Time / Value Analysis
 - 📊 Community Approval & Average Playtime
 
-✅ Smart Price & Authorized Deal Alerts:
-- Automatically cross-checks legitimate, publisher-authorized digital retailers (Humble Store) and highlights deals strictly when cheaper than Steam's current price.
+✅ Smart Multi-Store Price & Authorized Deal Alerts:
+- Automatically cross-checks legitimate, publisher-authorized digital retailers (GameBillet & Humble Store) and highlights deals strictly when cheaper than Steam's current price.
 
 ✅ 100% Privacy-Focused:
 - Zero user data collection or telemetry.
@@ -88,8 +88,8 @@ SteamLens AI, oyun sayfalarındaki topluluk incelemelerini tarar, spam ve meme y
 - ⏱️ Fiyat / Süre / Değer Analizi
 - 📊 Topluluk Onayı & Ortalama Oynanış Süresi
 
-✅ Akıllı Fiyat ve Yetkili Mağaza Fırsatları:
-- Yetkili Steam key satıcılarını (Humble Store) kontrol eder ve yalnızca oyun Steam'in o anki fiyatından daha ucuz olduğunda meşru indirimleri gösterir.
+✅ Akıllı Çoklu Mağaza Fiyatı ve Fırsat Uyarıları:
+- Yetkili Steam key satıcılarını (GameBillet & Humble Store) kontrol eder ve yalnızca oyun Steam'in o anki fiyatından daha ucuz olduğunda en avantajlı meşru indirimi gösterir.
 
 ✅ Gizlilik ve Güvenlik Odaklı:
 - Verileriniz asla üçüncü taraflarla paylaşılmaz.

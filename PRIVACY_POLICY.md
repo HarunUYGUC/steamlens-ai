@@ -1,6 +1,6 @@
 # Privacy Policy for SteamLens AI
 
-**Last Updated:** November 1, 2026  
+**Last Updated:** November 5, 2026  
 **Effective Date:** August 26, 2026
 
 SteamLens AI ("we", "our", or "the Extension") is committed to protecting user privacy. This Privacy Policy describes how SteamLens AI handles data in accordance with the Google Chrome Web Store Developer Program Policies.
@@ -42,7 +42,7 @@ All data processed by SteamLens AI is used exclusively for providing core extens
 ---
 
 ## 5. Affiliate Disclosure & External Store Links
-SteamLens AI includes a smart price-comparison buyer's guide feature that assists users in discovering legitimate discounts from authorized Steam key distributors (such as Humble Store):
+SteamLens AI includes a smart price-comparison buyer's guide feature that assists users in discovering legitimate discounts from authorized Steam key distributors (such as GameBillet and Humble Store):
 * **User-Initiated Navigation:** All store links are opened only when explicitly clicked by the user in a new tab. The Extension does not execute background redirects, hidden iframes, or cookie stuffing.
 * **Affiliate Partnerships:** When you click on an authorized store deal link and make a purchase, SteamLens AI may earn a small referral commission at no additional cost to you. This directly supports the ongoing maintenance and development of the extension.
 * **Strictly Authorized Resellers:** SteamLens AI only references official, publisher-authorized digital retailers that supply legitimate Steam activation keys.

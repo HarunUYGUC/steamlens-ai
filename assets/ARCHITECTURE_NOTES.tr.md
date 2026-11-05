@@ -484,12 +484,16 @@ Butona tıklandığı anda `renderLoading()` fonksiyonu devreye girer:
 
 ## 7. Yetkili Key Distribütörleri ve Komisyon (Affiliate) Mimarisi
 
-### 7.1 CheapShark API ve Doğrudan Partner Yönlendirmesi (Redirect Bypass)
+### 7.1 CheapShark API ve Çoklu Mağaza Karşılaştırması (GameBillet & Humble Store)
 
-SteamLens AI, oyun satın alma karar anında çalışan bir rehber (*Buyer's Guide*) olduğu için, kullanıcıya resmi distribütörlerden (**Humble Store**) gerçek indirimleri sunar.
+SteamLens AI, oyun satın alma karar anında çalışan bir rehber (*Buyer's Guide*) olduğu için, kullanıcıya resmi distribütörlerden (**GameBillet** ve **Humble Store**) gerçek indirimleri sunar.
 
-* **CheapShark API'sinin Rolü:** CheapShark'ın açık REST API'si (`api.cheapshark.com/1.0/deals?steamAppID=...&storeID=11`) API anahtarı gerektirmeden şimşek hızında güncel fiyat ve indirim oranını döner.
-* **Redirect Bypass (Komisyonun Korunması):** CheapShark normalde kendi affiliate yönlendirmesini (`cheapshark.com/redirect`) şart koşar. SteamLens AI, CheapShark'ı **sadece fiyat sorgulama** amacıyla kullanır. Satın alma bağlantıları ise doğrudan **Humble Store** arama sayfasına kendi resmi Impact.com ortaklık parametreniz (`?partner=steamlens-ai`) ile oluşturulur. Böylece %100 komisyon güvenliği sağlanır.
+* **CheapShark API'sinin Rolü:** CheapShark'ın açık REST API'si (`api.cheapshark.com/1.0/deals?steamAppID=...`) API anahtarı gerektirmeden şimşek hızında güncel fiyat ve indirim oranını döner. Mağaza kimlikleri (`/stores`) dinamik olarak çözümlenerek 7 gün süreyle önbelleklenir.
+* **Akıllı Çoklu Mağaza Rekabeti:** Hem GameBillet hem de Humble Store indirimleri çekilir ve birbiriyle kıyaslanır. En yüksek indirimi / en ucuz fiyatı sunan yetkili mağaza kazanan seçilir (fiyat eşitliğinde GameBillet önceliklendirilir).
+* **Redirect Bypass (Komisyonun Korunması):** CheapShark normalde kendi affiliate yönlendirmesini (`cheapshark.com/redirect`) şart koşar. SteamLens AI, CheapShark'ı **sadece fiyat sorgulama** amacıyla kullanır. Satın alma bağlantıları ise doğrudan kazanan mağazanın resmi arama sayfasına kullanıcının resmi ortaklık parametreleriyle oluşturulur:
+  - GameBillet için: `https://www.gamebillet.com/search?q={Oyun}&affiliate=cfbc4fed-8524-422f-b987-b99a3bc536ed` (%5 komisyon)
+  - Humble Store için: `https://www.humblebundle.com/store/search?search={Oyun}&partner=steamlens-ai`
+  Böylece %100 komisyon güvenliği sağlanır.
 
 ---
 
@@ -502,9 +506,9 @@ Steam sayfalarında sadece DOM üzerinden fiyat çekmek (sayfadaki DLC, Soundtra
    * Kullanıcının dili **İngilizce (`en`)** ise istek `cc=us` (US Standart USD) parametresiyle atılır.
    * API, doğrudan ana oyunun (`appId`) net ve güncel satış fiyatını (`final / 100`) sayısal olarak döndürür; paket/eklenti karışıklığı sıfıra iner.
 2. **Kapsamlı DOM Fallback (`getSteamPriceFromDOM`):** Ağ veya API erişimi kısıtlandığında, sadece ana oyuna ait `.game_area_purchase_game[data-ds-appid]` ve `meta[itemprop="price"]` etiketlerine odaklanan güvenli bir DOM yedekleyicisi devreye girer.
-3. **Kıyaslama Şartı:** `isCheaperThanSteam = (humbleSalePrice < steamPrice - 0.05)`
+3. **Kıyaslama Şartı:** `isCheaperThanSteam = (winningStorePrice < steamPrice - 0.05)`
 4. **Koşullu Gösterim:**
-   * **Humble, o bölgenin Steam fiyatından daha ucuzsa:** Fırsat rozeti özet butonunun üstünde belirir.
+   * **Kazanan mağaza (GameBillet veya Humble), o bölgenin Steam fiyatından daha ucuzsa:** Fırsat rozeti özet butonunun üstünde o mağazanın adı ve fiyatıyla (`🔥 GameBillet: $14.99 (-%25) ➔`) belirir.
    * **Steam daha ucuzsa veya aynıysa (örneğin MENA-USD Steam'de zaten çok daha avantajlıysa):** Fırsat rozeti gizlenir, sayfa temiz kalır. Kullanıcıya asla Steam'den daha pahalı bir link "indirim" diye sunulmaz.
 
 ---

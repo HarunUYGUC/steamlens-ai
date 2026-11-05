@@ -241,12 +241,14 @@
         teaser.dataset.appId = String(appId);
         teaser.href = deal.dealUrl;
 
+        const storeDisplayName = deal.storeName === 'GameBillet' ? 'GameBillet' : (deal.storeName === 'Humble Store' ? 'Humble' : (deal.storeName || 'Fırsat'));
         const isTr = currentLang === 'tr';
         const discountTag = deal.savingsPercent > 0 
           ? (isTr ? `(-%${deal.savingsPercent})` : `(-${deal.savingsPercent}%)`)
           : '';
 
         const tooltip = t('dealTooltipText', { 
+          store: storeDisplayName,
           savings: deal.savingsVsSteamPercent, 
           price: deal.salePriceFormatted 
         });
@@ -255,7 +257,7 @@
 
         teaser.innerHTML = `
           <span class="sl-deal-fire">🔥</span>
-          <span class="sl-deal-store">${escapeHtml(t('dealBtnStore'))}</span>
+          <span class="sl-deal-store">${escapeHtml(storeDisplayName)}:</span>
           <span class="sl-deal-price">${escapeHtml(deal.salePriceFormatted)}</span>
           ${discountTag ? `<span class="sl-deal-discount">${escapeHtml(discountTag)}</span>` : ''}
           <span class="sl-deal-arrow">➔</span>
